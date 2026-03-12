@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+}
+
+.card {
+    width: 380px;
+    background-color: white;
+    border-radius: 18px;
+    padding: 35px;
+    text-align: center;
+    margin-top: 9.5em;
+    margin-right: auto;
+    margin-bottom: 40px;
+    margin-left: auto;
+}
+
+.top-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #dceaea;
+    border-radius: 18px;
+    margin-top: 0;
+    margin-right: auto;
+    margin-bottom: 20px;
+    margin-left: auto;
+    font-size: 36px;
+    text-align: center;
+    line-height: 80px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #1f1f1f;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #777;
+    margin-top: 15px;
+    margin-right: 0;
+    margin-bottom: 30px;
+    margin-left: 0;
+    line-height: 1.6;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 46px;
+    padding-left: 14px;
+    padding-right: 45px;
+    font-size: 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.icon {
+    position: absolute;
+    right: 14px;
+    top: 15px;
+    font-size: 16px;
+    color: #999;
+}
+
+button {
+    width: 100%;
+    height: 50px;
+    background-color: #0d8b8d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0b7779;
+}
+
+.help {
+    font-size: 14px;
+    color: #666;
+    margin-top: 28px;
+    margin-right: 0;
+    margin-bottom: 20px;
+    margin-left: 0;
+}
+
+.footer {
+    border-top: 1px solid #eeeeee;
+    padding-top: 20px;
+    font-size: 14px;
+    color: #b0b0b0;
+}
+
+.footer-icon {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-color: #9f9f9f;
+    color: white;
+    border-radius: 5px;
+    margin-right: 8px;
+    font-size: 10px;
+    text-align: center;
+    line-height: 22px;
+}

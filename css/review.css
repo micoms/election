@@ -1,0 +1,252 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #1f2a44;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 18px;
+    padding-right: 40px;
+    padding-bottom: 18px;
+    padding-left: 40px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.top-logo {
+    display: flex;
+}
+
+.top-logo-icon {
+    width: 42px;
+    height: 42px;
+    background-color: #1b9a9a;
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 42px;
+    font-size: 20px;
+    margin-right: 12px;
+}
+
+.top-logo h2 {
+    margin: 0;
+    margin-top: 8px;
+    font-size: 20px;
+}
+
+.top-user {
+    display: flex;
+    color: #555;
+    font-size: 15px;
+    margin-top: 8px;
+}
+
+.top-user-icon {
+    width: 38px;
+    height: 38px;
+    background-color: #f1d8c5;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 38px;
+    margin-right: 10px;
+}
+
+.box {
+    width: 750px;
+    margin-top: 30px;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-left: auto;
+    padding-top: 0;
+    padding-right: 20px;
+    padding-bottom: 0;
+    padding-left: 20px;
+}
+
+.slash {
+    color: #999;
+    font-size: 14px;
+}
+
+.slash span {
+    color: #1b7f7f;
+    font-weight: bold;
+}
+
+.box .subtitle {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.tip {
+    display: flex;
+    background-color: #eaf2ff;
+    border: 1px solid #c5d9f5;
+    border-radius: 12px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.tip-icon {
+    width: 30px;
+    height: 30px;
+    background-color: #3b7dd8;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.tip h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #2a5a9e;
+    font-size: 16px;
+}
+
+.tip p {
+    margin: 0;
+    color: #4a6fa5;
+    font-size: 14px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding-top: 20px;
+    padding-right: 25px;
+    padding-bottom: 20px;
+    padding-left: 25px;
+    margin-bottom: 12px;
+}
+
+.row-left {
+    display: flex;
+}
+
+.circle {
+    width: 50px;
+    height: 50px;
+    background-color: #1b9a9a;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 16px;
+}
+
+.label {
+    font-size: 12px;
+    color: #1b7f7f;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 4px;
+}
+
+.row h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.edit-btn {
+    padding-top: 10px;
+    padding-right: 22px;
+    padding-bottom: 10px;
+    padding-left: 22px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.edit-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.row a {
+    text-decoration: none;
+}
+
+.confirm {
+    display: flex;
+    margin-top: 25px;
+    margin-right: 0;
+    margin-bottom: 25px;
+    margin-left: 0;
+    padding-top: 18px;
+    padding-right: 20px;
+    padding-bottom: 18px;
+    padding-left: 20px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.confirm input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.confirm label {
+    font-size: 15px;
+    color: #444;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-bottom: 40px;
+}
+
+.back-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 15px;
+    margin-top: 12px;
+}
+
+.back-link:hover {
+    color: #1b7f7f;
+}
+
+.submit-btn {
+    background-color: #1b9a9a;
+    color: white;
+    border: none;
+    padding-top: 16px;
+    padding-right: 35px;
+    padding-bottom: 16px;
+    padding-left: 35px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #178585;
+}
