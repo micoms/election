@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Ballot Summary</title>
     <link rel="stylesheet" href="../css/review.css">
 </head>
@@ -95,9 +97,107 @@
 
         <div class="bottom-buttons">
             <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
-            <button class="submit-btn" id="submitBtn">Submit My Vote →</button>
+            <div>
+                <button class="submit-btn" onclick="submitBallot()">Submit Final Vote</button>
+                <p class="secure">🔒 Secure SSL Encryption</p>
+            </div>
         </div>
     </div>
+
+    <div id="popupArea" style="display: none;">
+        <div class="dark-bg"></div>
+        <div class="popup">
+            <div class="popup-check">✔</div>
+            <h2>Vote Confirmed!</h2>
+            <p>Thank you for participating in the 2026 Student Council Election.</p>
+            <div class="receipt">
+                <p class="small">VOTING RECEIPT ID</p>
+                <h3 id="receiptId">#VOTE-2026-1234</h3>
+            </div>
+            <a href="../index.html"><button class="submit-btn">Return to Home</button></a>
+        </div>
+    </div>
+
+    <script>
+        // Candidate name → image mapping
+        var candidateImages = {
+            "Alex Rivera": "../images/alex_rivera.png",
+            "Jordan Lee": "../images/jordan_lee.png",
+            "Sam Smith": "../images/sam_smith.png",
+            "Maria Santos": "../images/maria_santos.png",
+            "Chris Reyes": "../images/chris_reyes.png",
+            "Taylor Brooks": "../images/taylor_brooks.png",
+            "Emily Chen": "../images/emily_chen.png",
+            "Daniel Park": "../images/daniel_park.png",
+            "Aisha Khan": "../images/aisha_khan.png",
+            "Ryan Garcia": "../images/ryan_garcia.png",
+            "Nina Flores": "../images/nina_flores.png",
+            "Jake Torres": "../images/jake_torres.png",
+            "Liam Cruz": "../images/liam_cruz.png",
+            "Sophie Tan": "../images/sophie_tan.png",
+            "Marcus Webb": "../images/marcus_webb.png"
+        };
+
+        function setAvatar(avatarId, name) {
+            var el = document.getElementById(avatarId);
+            if (candidateImages[name]) {
+                el.innerHTML = '<img src="' + candidateImages[name] + '" alt="' + name + '">';
+                el.classList.add("has-photo");
+            } else {
+                el.textContent = name[0];
+            }
+        }
+
+        // Show saved votes on the page
+        var president = localStorage.getItem("vote-president");
+        if (president) {
+            document.getElementById("name-president").textContent = president;
+            setAvatar("avatar-president", president);
+        }
+
+        var vp = localStorage.getItem("vote-vicepresident");
+        if (vp) {
+            document.getElementById("name-vicepresident").textContent = vp;
+            setAvatar("avatar-vicepresident", vp);
+        }
+
+        var sec = localStorage.getItem("vote-secretary");
+        if (sec) {
+            document.getElementById("name-secretary").textContent = sec;
+            setAvatar("avatar-secretary", sec);
+        }
+
+        var tres = localStorage.getItem("vote-treasurer");
+        if (tres) {
+            document.getElementById("name-treasurer").textContent = tres;
+            setAvatar("avatar-treasurer", tres);
+        }
+
+        var aud = localStorage.getItem("vote-auditor");
+        if (aud) {
+            document.getElementById("name-auditor").textContent = aud;
+            setAvatar("avatar-auditor", aud);
+        }
+
+        // Submit button
+        function submitBallot() {
+            var checkbox = document.getElementById("confirmBox");
+            if (checkbox.checked === false) {
+                alert("Please check the confirmation box first.");
+                return;
+            }
+
+            // Show the popup
+            document.getElementById("popupArea").style.display = "block";
+
+            // Clear all votes
+            localStorage.removeItem("vote-president");
+            localStorage.removeItem("vote-vicepresident");
+            localStorage.removeItem("vote-secretary");
+            localStorage.removeItem("vote-treasurer");
+            localStorage.removeItem("vote-auditor");
+        }
+    </script>
 
 </body>
 

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Vote - Auditor</title>
+    <link rel="stylesheet" href="../css/dash.css">
+</head>
+
+<body>
+    <div class="page">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🗳</div>
+                <div>
+                    <h2>Student Vote</h2>
+                    <p>Fall Election 2026</p>
+                </div>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html" class="link">Dashboard</a>
+                <p class="menu-label">BALLOT SECTIONS</p>
+                <a href="president.html" class="link">President</a>
+                <a href="vice-president.html" class="link">Vice President</a>
+                <a href="secretary.html" class="link">Secretary</a>
+                <a href="treasurer.html" class="link">Treasurer</a>
+                <a href="auditor.html" class="link current">Auditor</a>
+                <a href="review.html" class="link last">Review & Submit</a>
+            </div>
+
+            <div class="user-info">
+                <div class="user-icon">👤</div>
+                <div>
+                    <h3>Sarah Jenkins</h3>
+                    <p>Student ID: #882910</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main">
+            <div class="step-bar">Step 5 of 5 • Auditor Election</div>
+
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: 100%;"></div>
+            </div>
+
+            <div class="content">
+                <h1>Cast your vote for Auditor</h1>
+                <p class="subtitle">Select one candidate to oversee finances and ensure accountability.</p>
+
+                <div class="cards">
+                    <div class="card" id="card-Liam Cruz">
+                        <div class="card-photo"><img src="../images/liam_cruz.png" alt="Liam Cruz"></div>
+                        <div class="card-text">
+                            <h2>Liam Cruz</h2>
+                            <p class="slogan">"Accountability starts with us."</p>
+                            <p class="about">Liam is an accounting student who wants to bring professional auditing standards to council finances.</p>
+                            <button id="btn-Liam Cruz" class="pick-btn" onclick="vote('Liam Cruz')">Select Candidate</button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Sophie Tan">
+                        <div class="card-photo"><img src="../images/sophie_tan.png" alt="Sophie Tan"></div>
+                        <div class="card-text">
+                            <h2>Sophie Tan</h2>
+                            <p class="slogan">"Transparent records, trusted council."</p>
+                            <p class="about">Sophie believes in open-book policies and wants to publish quarterly audit reports.</p>
+                            <button id="btn-Sophie Tan" class="pick-btn" onclick="vote('Sophie Tan')">Select Candidate</button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Marcus Webb">
+                        <div class="card-photo"><img src="../images/marcus_webb.png" alt="Marcus Webb"></div>
+                        <div class="card-text">
+                            <h2>Marcus Webb</h2>
+                            <p class="slogan">"Trust through transparency."</p>
+                            <p class="about">Marcus wants to create a simple website where students can see how their fees are spent.</p>
+                            <button id="btn-Marcus Webb" class="pick-btn" onclick="vote('Marcus Webb')">Select Candidate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notice">You can change your selection at any time before final submission.</div>
+            </div>
+
+            <div class="bottom">
+                <a href="review.html">Skip this position</a>
+                <div class="your-pick">Your pick: <span id="pickName">None yet</span></div>
+                <a href="review.html"><button class="next-btn">Review & Submit →</button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var saved = localStorage.getItem("vote-auditor");
+
+        if (saved) {
+            document.getElementById("pickName").textContent = saved;
+
+            var btn = document.getElementById("btn-" + saved);
+            btn.textContent = "Selected ✔";
+            btn.style.backgroundColor = "#1b9a9a";
+            btn.style.color = "white";
+            btn.style.border = "none";
+
+            var card = document.getElementById("card-" + saved);
+            card.style.border = "4px solid #1b9a9a";
+        }
+
+        function vote(name) {
+            localStorage.setItem("vote-auditor", name);
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

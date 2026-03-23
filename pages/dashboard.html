@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Vote - Dashboard</title>
+    <link rel="stylesheet" href="../css/dash.css">
+</head>
+
+<body>
+    <div class="page">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🗳</div>
+                <div>
+                    <h2>Student Vote</h2>
+                    <p>Fall Election 2026</p>
+                </div>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html" class="link current">Dashboard</a>
+                <p class="menu-label">BALLOT SECTIONS</p>
+                <a href="president.html" class="link">President</a>
+                <a href="vice-president.html" class="link">Vice President</a>
+                <a href="secretary.html" class="link">Secretary</a>
+                <a href="treasurer.html" class="link">Treasurer</a>
+                <a href="auditor.html" class="link">Auditor</a>
+                <a href="review.html" class="link last">Review & Submit</a>
+            </div>
+
+            <div class="user-info">
+                <div class="user-icon">👤</div>
+                <div>
+                    <h3>User</h3>
+                    <p>Student ID: #1234</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main">
+            <div class="step-bar">Welcome back!</div>
+
+            <div class="content">
+                <h1>Dashboard</h1>
+                <p class="subtitle">
+                    Welcome to the Student Council Election 2026. Click on any position
+                    below to start voting.
+                </p>
+
+                <div class="cards">
+                    <div class="dash-card">
+                        <div class="icon">👔</div>
+                        <h2>President</h2>
+                        <p id="status-president" style="color: #999;">Not yet voted</p>
+                        <a href="president.html" class="vote-link">Vote Now →</a>
+                    </div>
+
+                    <div class="dash-card">
+                        <div class="icon">🤝</div>
+                        <h2>Vice President</h2>
+                        <p id="status-vicepresident" style="color: #999;">Not yet voted</p>
+                        <a href="vice-president.html" class="vote-link">Vote Now →</a>
+                    </div>
+
+                    <div class="dash-card">
+                        <div class="icon">📋</div>
+                        <h2>Secretary</h2>
+                        <p id="status-secretary" style="color: #999;">Not yet voted</p>
+                        <a href="secretary.html" class="vote-link">Vote Now →</a>
+                    </div>
+
+                    <div class="dash-card">
+                        <div class="icon">💰</div>
+                        <h2>Treasurer</h2>
+                        <p id="status-treasurer" style="color: #999;">Not yet voted</p>
+                        <a href="treasurer.html" class="vote-link">Vote Now →</a>
+                    </div>
+
+                    <div class="dash-card">
+                        <div class="icon">🔍</div>
+                        <h2>Auditor</h2>
+                        <p id="status-auditor" style="color: #999;">Not yet voted</p>
+                        <a href="auditor.html" class="vote-link">Vote Now →</a>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    Make sure to vote in all 5 categories before submitting your ballot.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check each position and show who was voted for
+
+        var president = localStorage.getItem("vote-president");
+        if (president) {
+            document.getElementById("status-president").textContent = "Voted: " + president;
+            document.getElementById("status-president").style.color = "#1b9a9a";
+        }
+
+        var vp = localStorage.getItem("vote-vicepresident");
+        if (vp) {
+            document.getElementById("status-vicepresident").textContent = "Voted: " + vp;
+            document.getElementById("status-vicepresident").style.color = "#1b9a9a";
+        }
+
+        var sec = localStorage.getItem("vote-secretary");
+        if (sec) {
+            document.getElementById("status-secretary").textContent = "Voted: " + sec;
+            document.getElementById("status-secretary").style.color = "#1b9a9a";
+        }
+
+        var tres = localStorage.getItem("vote-treasurer");
+        if (tres) {
+            document.getElementById("status-treasurer").textContent = "Voted: " + tres;
+            document.getElementById("status-treasurer").style.color = "#1b9a9a";
+        }
+
+        var aud = localStorage.getItem("vote-auditor");
+        if (aud) {
+            document.getElementById("status-auditor").textContent = "Voted: " + aud;
+            document.getElementById("status-auditor").style.color = "#1b9a9a";
+        }
+    </script>
+</body>
+
+</html>
