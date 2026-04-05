@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Vote - PIO</title>
+    <link rel="stylesheet" href="../css/dash.css" />
+</head>
+
+<body>
+    <div class="page">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">&#128499;</div>
+                <div>
+                    <h2>Student Vote</h2>
+                    <p>Fall Election 2026</p>
+                </div>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html" class="link">Dashboard</a>
+                <p class="menu-label">BALLOT SECTIONS</p>
+                <a href="president.html" class="link">President</a>
+                <a href="vice-president.html" class="link">Vice President</a>
+                <a href="secretary.html" class="link">Secretary</a>
+                <a href="treasurer.html" class="link">Treasurer</a>
+                <a href="auditor.html" class="link">Auditor</a>
+                <a href="pio.html" class="link current">PIO</a>
+                <a href="business-manager.html" class="link">Business Manager</a>
+                <a href="sergeant-at-arms.html" class="link">Sergeant-at-Arms</a>
+                <a href="review.html" class="link last">Review &amp; Submit</a>
+            </div>
+
+            <div class="user-info">
+                <div class="user-icon">&#128100;</div>
+                <div>
+                    <h3>Sarah Jenkins</h3>
+                    <p>Student ID: #1234</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="step-bar">
+                Step 6 of 8 &bull; Public Information Officer Election
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: 75%"></div>
+            </div>
+
+            <div class="content">
+                <h1>Cast your vote for PIO</h1>
+                <p class="subtitle">
+                    Select one candidate to lead student announcements,
+                    promotions, and public communication.
+                </p>
+
+                <div class="cards">
+                    <div class="card" id="card-Bianca Reyes">
+                        <div class="card-photo">
+                            <img src="../images/bianca_reyes.png" alt="Bianca Reyes" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Bianca Reyes</h2>
+                            <p class="slogan">
+                                "Clear updates. Stronger student
+                                connection."
+                            </p>
+                            <p class="about">
+                                Bianca wants to improve election coverage,
+                                event promotions, and council announcements
+                                across campus platforms.
+                            </p>
+                            <button id="btn-Bianca Reyes" class="pick-btn" onclick="vote('Bianca Reyes')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Carlo Mendoza">
+                        <div class="card-photo">
+                            <img src="../images/carlo_mendoza.png" alt="Carlo Mendoza" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Carlo Mendoza</h2>
+                            <p class="slogan">
+                                "Fast information for every student."
+                            </p>
+                            <p class="about">
+                                Carlo plans to launch a weekly digest so
+                                students never miss important deadlines,
+                                projects, or council initiatives.
+                            </p>
+                            <button id="btn-Carlo Mendoza" class="pick-btn" onclick="vote('Carlo Mendoza')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Hazel Lim">
+                        <div class="card-photo">
+                            <img src="../images/hazel_lim.png" alt="Hazel Lim" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Hazel Lim</h2>
+                            <p class="slogan">
+                                "Creative campaigns that reach everyone."
+                            </p>
+                            <p class="about">
+                                Hazel wants to strengthen the council's
+                                visual identity and make student outreach
+                                more engaging and accessible.
+                            </p>
+                            <button id="btn-Hazel Lim" class="pick-btn" onclick="vote('Hazel Lim')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    You can change your selection at any time before final
+                    submission.
+                </div>
+            </div>
+
+            <div class="bottom">
+                <a href="business-manager.html">Skip this position</a>
+                <div class="your-pick">
+                    Your pick: <span id="pickName">None yet</span>
+                </div>
+                <a href="business-manager.html"><button class="next-btn">
+                        Next: Business Manager &#8594;
+                    </button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var saved = localStorage.getItem("vote-pio");
+
+        if (saved) {
+            document.getElementById("pickName").textContent = saved;
+
+            var btn = document.getElementById("btn-" + saved);
+            btn.textContent = "Selected \u2714";
+            btn.style.backgroundColor = "#1b9a9a";
+            btn.style.color = "white";
+            btn.style.border = "none";
+
+            var card = document.getElementById("card-" + saved);
+            card.style.border = "4px solid #1b9a9a";
+        }
+
+        function vote(name) {
+            localStorage.setItem("vote-pio", name);
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

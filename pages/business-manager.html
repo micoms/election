@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Vote - Business Manager</title>
+    <link rel="stylesheet" href="../css/dash.css" />
+</head>
+
+<body>
+    <div class="page">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">&#128499;</div>
+                <div>
+                    <h2>Student Vote</h2>
+                    <p>Fall Election 2026</p>
+                </div>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html" class="link">Dashboard</a>
+                <p class="menu-label">BALLOT SECTIONS</p>
+                <a href="president.html" class="link">President</a>
+                <a href="vice-president.html" class="link">Vice President</a>
+                <a href="secretary.html" class="link">Secretary</a>
+                <a href="treasurer.html" class="link">Treasurer</a>
+                <a href="auditor.html" class="link">Auditor</a>
+                <a href="pio.html" class="link">PIO</a>
+                <a href="business-manager.html" class="link current">Business Manager</a>
+                <a href="sergeant-at-arms.html" class="link">Sergeant-at-Arms</a>
+                <a href="review.html" class="link last">Review &amp; Submit</a>
+            </div>
+
+            <div class="user-info">
+                <div class="user-icon">&#128100;</div>
+                <div>
+                    <h3>Sarah Jenkins</h3>
+                    <p>Student ID: #1234</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="step-bar">
+                Step 7 of 8 &bull; Business Manager Election
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: 87.5%"></div>
+            </div>
+
+            <div class="content">
+                <h1>Cast your vote for Business Manager</h1>
+                <p class="subtitle">
+                    Select one candidate to coordinate logistics,
+                    sponsorships, and operational planning.
+                </p>
+
+                <div class="cards">
+                    <div class="card" id="card-Adrian Co">
+                        <div class="card-photo">
+                            <img src="../images/adrian_co.png" alt="Adrian Co" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Adrian Co</h2>
+                            <p class="slogan">
+                                "Better systems, smoother events."
+                            </p>
+                            <p class="about">
+                                Adrian wants to improve procurement, event
+                                budgeting, and sponsorship coordination for
+                                student-led activities.
+                            </p>
+                            <button id="btn-Adrian Co" class="pick-btn" onclick="vote('Adrian Co')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Patricia Gomez">
+                        <div class="card-photo">
+                            <img src="../images/patricia_gomez.png" alt="Patricia Gomez" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Patricia Gomez</h2>
+                            <p class="slogan">
+                                "Resources that work for students."
+                            </p>
+                            <p class="about">
+                                Patricia plans to build stronger
+                                partnerships with campus groups so projects
+                                get the support they need on time.
+                            </p>
+                            <button id="btn-Patricia Gomez" class="pick-btn" onclick="vote('Patricia Gomez')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-Vincent Ong">
+                        <div class="card-photo">
+                            <img src="../images/vincent_ong.png" alt="Vincent Ong" />
+                        </div>
+                        <div class="card-text">
+                            <h2>Vincent Ong</h2>
+                            <p class="slogan">
+                                "Planning ahead for every project."
+                            </p>
+                            <p class="about">
+                                Vincent wants a clearer operations calendar,
+                                better vendor coordination, and more
+                                efficient event execution.
+                            </p>
+                            <button id="btn-Vincent Ong" class="pick-btn" onclick="vote('Vincent Ong')">
+                                Select Candidate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    You can change your selection at any time before final
+                    submission.
+                </div>
+            </div>
+
+            <div class="bottom">
+                <a href="sergeant-at-arms.html">Skip this position</a>
+                <div class="your-pick">
+                    Your pick: <span id="pickName">None yet</span>
+                </div>
+                <a href="sergeant-at-arms.html"><button class="next-btn">
+                        Next: Sergeant-at-Arms &#8594;
+                    </button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var saved = localStorage.getItem("vote-businessmanager");
+
+        if (saved) {
+            document.getElementById("pickName").textContent = saved;
+
+            var btn = document.getElementById("btn-" + saved);
+            btn.textContent = "Selected \u2714";
+            btn.style.backgroundColor = "#1b9a9a";
+            btn.style.color = "white";
+            btn.style.border = "none";
+
+            var card = document.getElementById("card-" + saved);
+            card.style.border = "4px solid #1b9a9a";
+        }
+
+        function vote(name) {
+            localStorage.setItem("vote-businessmanager", name);
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

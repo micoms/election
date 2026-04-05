@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -9,15 +9,14 @@
 </head>
 
 <body>
-
     <div class="top">
         <div class="top-logo">
-            <div class="top-logo-icon">🗳</div>
+            <div class="top-logo-icon">&#128499;</div>
             <h2>Student Council Voting</h2>
         </div>
         <div class="top-user">
             <span>Welcome, User</span>
-            <div class="top-user-icon">👤</div>
+            <div class="top-user-icon">&#128100;</div>
         </div>
     </div>
 
@@ -90,16 +89,49 @@
             <a href="auditor.html"><button class="edit-btn">Edit</button></a>
         </div>
 
+        <div class="row">
+            <div class="row-left">
+                <div class="circle" id="avatar-pio">--</div>
+                <div>
+                    <p class="label">PIO</p>
+                    <h3 id="name-pio">No Selection Made</h3>
+                </div>
+            </div>
+            <a href="pio.html"><button class="edit-btn">Edit</button></a>
+        </div>
+
+        <div class="row">
+            <div class="row-left">
+                <div class="circle" id="avatar-businessmanager">--</div>
+                <div>
+                    <p class="label">BUSINESS MANAGER</p>
+                    <h3 id="name-businessmanager">No Selection Made</h3>
+                </div>
+            </div>
+            <a href="business-manager.html"><button class="edit-btn">Edit</button></a>
+        </div>
+
+        <div class="row">
+            <div class="row-left">
+                <div class="circle" id="avatar-sergeantatarms">--</div>
+                <div>
+                    <p class="label">SERGEANT-AT-ARMS</p>
+                    <h3 id="name-sergeantatarms">No Selection Made</h3>
+                </div>
+            </div>
+            <a href="sergeant-at-arms.html"><button class="edit-btn">Edit</button></a>
+        </div>
+
         <div class="confirm">
             <input type="checkbox" id="confirmBox">
             <label for="confirmBox">I confirm that my selections are final and accurate.</label>
         </div>
 
         <div class="bottom-buttons">
-            <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+            <a href="dashboard.html" class="back-link">&#8592; Back to Dashboard</a>
             <div>
                 <button class="submit-btn" onclick="submitBallot()">Submit Final Vote</button>
-                <p class="secure">🔒 Secure SSL Encryption</p>
+                <p class="secure">&#128274; Secure SSL Encryption</p>
             </div>
         </div>
     </div>
@@ -107,7 +139,7 @@
     <div id="popupArea" style="display: none;">
         <div class="dark-bg"></div>
         <div class="popup">
-            <div class="popup-check">✔</div>
+            <div class="popup-check">&#10004;</div>
             <h2>Vote Confirmed!</h2>
             <p>Thank you for participating in the 2026 Student Council Election.</p>
             <div class="receipt">
@@ -119,7 +151,6 @@
     </div>
 
     <script>
-        // Candidate name → image mapping
         var candidateImages = {
             "Alex Rivera": "../images/alex_rivera.png",
             "Jordan Lee": "../images/jordan_lee.png",
@@ -135,7 +166,16 @@
             "Jake Torres": "../images/jake_torres.png",
             "Liam Cruz": "../images/liam_cruz.png",
             "Sophie Tan": "../images/sophie_tan.png",
-            "Marcus Webb": "../images/marcus_webb.png"
+            "Marcus Webb": "../images/marcus_webb.png",
+            "Bianca Reyes": "../images/bianca_reyes.png",
+            "Carlo Mendoza": "../images/carlo_mendoza.png",
+            "Hazel Lim": "../images/hazel_lim.png",
+            "Adrian Co": "../images/adrian_co.png",
+            "Patricia Gomez": "../images/patricia_gomez.png",
+            "Vincent Ong": "../images/vincent_ong.png",
+            "Gabriel Navarro": "../images/gabriel_navarro.png",
+            "Leila Ramos": "../images/leila_ramos.png",
+            "Owen Castillo": "../images/owen_castillo.png"
         };
 
         function setAvatar(avatarId, name) {
@@ -148,38 +188,23 @@
             }
         }
 
-        // Show saved votes on the page
-        var president = localStorage.getItem("vote-president");
-        if (president) {
-            document.getElementById("name-president").textContent = president;
-            setAvatar("avatar-president", president);
+        function setSelection(storageKey, nameId, avatarId) {
+            var savedVote = localStorage.getItem(storageKey);
+            if (savedVote) {
+                document.getElementById(nameId).textContent = savedVote;
+                setAvatar(avatarId, savedVote);
+            }
         }
 
-        var vp = localStorage.getItem("vote-vicepresident");
-        if (vp) {
-            document.getElementById("name-vicepresident").textContent = vp;
-            setAvatar("avatar-vicepresident", vp);
-        }
+        setSelection("vote-president", "name-president", "avatar-president");
+        setSelection("vote-vicepresident", "name-vicepresident", "avatar-vicepresident");
+        setSelection("vote-secretary", "name-secretary", "avatar-secretary");
+        setSelection("vote-treasurer", "name-treasurer", "avatar-treasurer");
+        setSelection("vote-auditor", "name-auditor", "avatar-auditor");
+        setSelection("vote-pio", "name-pio", "avatar-pio");
+        setSelection("vote-businessmanager", "name-businessmanager", "avatar-businessmanager");
+        setSelection("vote-sergeantatarms", "name-sergeantatarms", "avatar-sergeantatarms");
 
-        var sec = localStorage.getItem("vote-secretary");
-        if (sec) {
-            document.getElementById("name-secretary").textContent = sec;
-            setAvatar("avatar-secretary", sec);
-        }
-
-        var tres = localStorage.getItem("vote-treasurer");
-        if (tres) {
-            document.getElementById("name-treasurer").textContent = tres;
-            setAvatar("avatar-treasurer", tres);
-        }
-
-        var aud = localStorage.getItem("vote-auditor");
-        if (aud) {
-            document.getElementById("name-auditor").textContent = aud;
-            setAvatar("avatar-auditor", aud);
-        }
-
-        // Submit button
         function submitBallot() {
             var checkbox = document.getElementById("confirmBox");
             if (checkbox.checked === false) {
@@ -187,18 +212,18 @@
                 return;
             }
 
-            // Show the popup
             document.getElementById("popupArea").style.display = "block";
 
-            // Clear all votes
             localStorage.removeItem("vote-president");
             localStorage.removeItem("vote-vicepresident");
             localStorage.removeItem("vote-secretary");
             localStorage.removeItem("vote-treasurer");
             localStorage.removeItem("vote-auditor");
+            localStorage.removeItem("vote-pio");
+            localStorage.removeItem("vote-businessmanager");
+            localStorage.removeItem("vote-sergeantatarms");
         }
     </script>
-
 </body>
 
 </html>
