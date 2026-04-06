@@ -11,12 +11,12 @@
 <body>
     <div class="top">
         <div class="top-logo">
-            <div class="top-logo-icon">&#128499;</div>
+            <div class="top-logo-icon">🗳️</div>
             <h2>Student Council Voting</h2>
         </div>
         <div class="top-user">
             <span>Welcome, User</span>
-            <div class="top-user-icon">&#128100;</div>
+            <div class="top-user-icon">👤</div>
         </div>
     </div>
 
@@ -111,16 +111,6 @@
             <a href="business-manager.html"><button class="edit-btn">Edit</button></a>
         </div>
 
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-sergeantatarms">--</div>
-                <div>
-                    <p class="label">SERGEANT-AT-ARMS</p>
-                    <h3 id="name-sergeantatarms">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="sergeant-at-arms.html"><button class="edit-btn">Edit</button></a>
-        </div>
 
         <div class="confirm">
             <input type="checkbox" id="confirmBox">
@@ -128,10 +118,10 @@
         </div>
 
         <div class="bottom-buttons">
-            <a href="dashboard.html" class="back-link">&#8592; Back to Dashboard</a>
+            <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
             <div>
                 <button class="submit-btn" onclick="submitBallot()">Submit Final Vote</button>
-                <p class="secure">&#128274; Secure SSL Encryption</p>
+                <p class="secure">🔒 Secure SSL Encryption</p>
             </div>
         </div>
     </div>
@@ -139,7 +129,7 @@
     <div id="popupArea" style="display: none;">
         <div class="dark-bg"></div>
         <div class="popup">
-            <div class="popup-check">&#10004;</div>
+            <div class="popup-check">✔</div>
             <h2>Vote Confirmed!</h2>
             <p>Thank you for participating in the 2026 Student Council Election.</p>
             <div class="receipt">
@@ -172,10 +162,7 @@
             "Hazel Lim": "../images/hazel_lim.png",
             "Adrian Co": "../images/adrian_co.png",
             "Patricia Gomez": "../images/patricia_gomez.png",
-            "Vincent Ong": "../images/vincent_ong.png",
-            "Gabriel Navarro": "../images/gabriel_navarro.png",
-            "Leila Ramos": "../images/leila_ramos.png",
-            "Owen Castillo": "../images/owen_castillo.png"
+            "Vincent Ong": "../images/vincent_ong.png"
         };
 
         function setAvatar(avatarId, name) {
@@ -203,7 +190,6 @@
         setSelection("vote-auditor", "name-auditor", "avatar-auditor");
         setSelection("vote-pio", "name-pio", "avatar-pio");
         setSelection("vote-businessmanager", "name-businessmanager", "avatar-businessmanager");
-        setSelection("vote-sergeantatarms", "name-sergeantatarms", "avatar-sergeantatarms");
 
         function submitBallot() {
             var checkbox = document.getElementById("confirmBox");
@@ -221,7 +207,6 @@
             localStorage.removeItem("vote-auditor");
             localStorage.removeItem("vote-pio");
             localStorage.removeItem("vote-businessmanager");
-            localStorage.removeItem("vote-sergeantatarms");
         }
     </script>
 </body>

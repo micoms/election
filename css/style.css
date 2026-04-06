@@ -55,7 +55,6 @@ label {
 }
 
 .input-box {
-    position: relative;
     margin-bottom: 20px;
 }
 
@@ -63,7 +62,7 @@ label {
     width: 100%;
     height: 46px;
     padding-left: 14px;
-    padding-right: 45px;
+    padding-right: 14px;
     font-size: 14px;
     border: 1px solid #d8d8d8;
     border-radius: 10px;
@@ -73,21 +72,12 @@ label {
 .input-box textarea {
     width: 100%;
     min-height: 120px;
-    padding: 14px 45px 14px 14px;
+    padding: 14px;
     font-size: 14px;
     font-family: Arial, sans-serif;
     border: 1px solid #d8d8d8;
     border-radius: 10px;
     box-sizing: border-box;
-    resize: vertical;
-}
-
-.icon {
-    position: absolute;
-    right: 14px;
-    top: 15px;
-    font-size: 16px;
-    color: #999;
 }
 
 button {
