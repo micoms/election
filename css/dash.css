@@ -120,24 +120,12 @@ a.link.last {
 }
 
 .step-bar {
-    padding: 20px 35px 10px;
+    padding: 20px 35px 26px;
     font-size: 16px;
     color: #444;
     background-color: #f8f8f8;
 }
 
-.progress-bar {
-    height: 10px;
-    background-color: #dde7eb;
-    margin: 0 35px 25px;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background-color: #1b9a9a;
-}
 
 .content {
     padding: 10px 35px 30px;
