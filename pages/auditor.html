@@ -29,7 +29,8 @@
                 <a href="auditor.html" class="link current">Auditor</a>
                 <a href="pio.html" class="link">PIO</a>
                 <a href="business-manager.html" class="link">Business Manager</a>
-                <a href="review.html" class="link last">Review &amp; Submit</a>
+                <a href="review.html" class="link">Review &amp; Submit</a>
+                <a href="tally.html" class="link last">📊 Tally</a>
             </div>
 
             <div class="user-info">
@@ -59,6 +60,7 @@
                         </div>
                         <div class="card-text">
                             <h2>Liam Cruz</h2>
+                            <div class="candidate-meta">College of Computer Studies &bull; 1st Year</div>
                             <p class="slogan">
                                 "Accountability starts with us."
                             </p>
@@ -79,6 +81,7 @@
                         </div>
                         <div class="card-text">
                             <h2>Sophie Tan</h2>
+                            <div class="candidate-meta">College of Business Administration &bull; 2nd Year</div>
                             <p class="slogan">
                                 "Transparent records, trusted council."
                             </p>
@@ -98,6 +101,7 @@
                         </div>
                         <div class="card-text">
                             <h2>Marcus Webb</h2>
+                            <div class="candidate-meta">College of Arts and Sciences &bull; 3rd Year</div>
                             <p class="slogan">
                                 "Trust through transparency."
                             </p>
@@ -136,10 +140,9 @@
             document.getElementById("pickName").textContent = saved;
 
             var btn = document.getElementById("btn-" + saved);
-            btn.textContent = "Selected \u2714";
-            btn.style.backgroundColor = "#1b9a9a";
-            btn.style.color = "white";
-            btn.style.border = "none";
+            btn.textContent = "Unselect";
+            btn.className = "unselect-btn";
+            btn.onclick = unselect;
 
             var card = document.getElementById("card-" + saved);
             card.style.border = "4px solid #1b9a9a";
@@ -147,6 +150,11 @@
 
         function vote(name) {
             localStorage.setItem("vote-auditor", name);
+            location.reload();
+        }
+
+        function unselect() {
+            localStorage.removeItem("vote-auditor");
             location.reload();
         }
     </script>

@@ -176,8 +176,15 @@ a.link.last {
 }
 
 .card-text h2 {
-    margin: 0 0 10px;
+    margin: 0 0 5px;
     font-size: 22px;
+}
+
+.candidate-meta {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+    font-weight: bold;
 }
 
 .card-text .slogan {
@@ -276,4 +283,22 @@ a.link.last {
     text-decoration: none;
     font-weight: bold;
     font-size: 16px;
+}
+
+.unselect-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cc4444;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: white;
+    color: #cc4444;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.unselect-btn:hover {
+    background-color: #cc4444;
+    color: white;
 }

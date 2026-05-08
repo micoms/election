@@ -124,3 +124,24 @@ button:hover {
     text-align: center;
     line-height: 22px;
 }
+
+.input-box select {
+    width: 100%;
+    height: 46px;
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    color: #333;
+}
+
+.dev-link {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    margin-top: 15px;
+}

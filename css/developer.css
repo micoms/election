@@ -1,0 +1,80 @@
+.dev-container {
+    max-width: 1100px;
+    margin: 4em auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.dev-container h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.dev-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.dev-card {
+    width: 320px;
+    background-color: white;
+    border-radius: 18px;
+    padding: 30px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dev-info {
+    margin-bottom: 25px;
+}
+
+.dev-avatar {
+    width: 70px;
+    height: 70px;
+    background-color: #dceaea;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 70px;
+}
+
+.dev-name {
+    margin: 0;
+    font-size: 20px;
+    color: #1f2a44;
+}
+
+.dev-role {
+    color: #1b7f7f;
+    font-size: 14px;
+    margin: 5px 0 0;
+    font-weight: bold;
+}
+
+.dev-details {
+    text-align: left;
+}
+
+.dev-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+
+.dev-item:last-child {
+    border-bottom: none;
+}
+
+.dev-label {
+    color: #999;
+    font-weight: bold;
+}
+
+.dev-value {
+    color: #333;
+}
