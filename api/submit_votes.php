@@ -10,8 +10,7 @@ if (!$voter_id) {
 
 $conn->query("UPDATE voters SET has_voted = 1 WHERE id = $voter_id");
 
-// affected_rows is 0 when has_voted was already 1 (no-op update), which is
-// still a valid success state — the voter exists and is marked as voted.
+
 if ($conn->error) {
     echo json_encode(['success' => false, 'message' => 'Failed to submit vote: ' . $conn->error]);
 } else {
