@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $voteStmt = $pdo->prepare(
                 'INSERT INTO votes (user_id, position_id, candidate_id) VALUES (?, ?, ?)
-                 ON DUPLICATE KEY UPDATE candidate_id = VALUES(candidate_id), updated_at = CURRENT_TIMESTAMP'
+                 ON DUPLICATE KEY UPDATE candidate_id = ?, updated_at = CURRENT_TIMESTAMP'
             );
-            $voteStmt->execute([(int) $user['id'], $positionId, $candidateId]);
+            $voteStmt->execute([(int) $user['id'], $positionId, $candidateId, $candidateId]);
 
             if ($existingCandidateId !== false && (int) $existingCandidateId !== $candidateId) {
                 $auditStmt = $pdo->prepare(

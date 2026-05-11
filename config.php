@@ -12,6 +12,7 @@ const DB_NAME = 'election';
 const DB_USER = 'root';
 // Local development default only. Use DB_PASS environment variable in deployed environments.
 const DB_PASS = '';
+const APP_ENV = 'development';
 
 function db(): PDO
 {
@@ -26,6 +27,11 @@ function db(): PDO
     $name = getenv('DB_NAME') ?: DB_NAME;
     $user = getenv('DB_USER') ?: DB_USER;
     $pass = getenv('DB_PASS') ?: DB_PASS;
+    $appEnv = getenv('APP_ENV') ?: APP_ENV;
+
+    if ($appEnv !== 'development' && $pass === '') {
+        throw new RuntimeException('DB_PASS must be set when APP_ENV is not development.');
+    }
 
     $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
     $pdo = new PDO(
