@@ -11,9 +11,7 @@ if (!$voter_id || !$position || !$candidate_id) {
     exit;
 }
 
-// Insert or update the vote for this position.
-// ON DUPLICATE KEY UPDATE handles the case where the voter changed their
-// selection before final submission — the latest pick always wins.
+
 $conn->query("
     INSERT INTO votes (user_id, position, candidate_id)
     VALUES ($voter_id, '$position', $candidate_id)
