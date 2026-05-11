@@ -16,20 +16,21 @@
         <h1>Student Council<br>Election 2026</h1>
         <p class="subtitle">
             Secure Ballot Access. Please enter your
-            student credentials to continue.
+            admin credentials to continue.
         </p>
 
-        <label>Student ID</label>
+        <label>Email</label>
         <div class="input-box">
-            <input type="text" placeholder="e.g. 20248891">
+            <input type="email" id="email" placeholder="vote@vote.vt">
         </div>
 
         <label>Password</label>
         <div class="input-box">
-            <input type="password" placeholder="••••••••••">
+            <input type="password" id="password" placeholder="••••••••••">
         </div>
 
-        <a href="pages/dashboard.html"><button>Access Ballot →</button></a>
+        <button id="loginBtn" onclick="handleLogin()">Access Ballot →</button>
+        <p id="errorMsg" style="color: red; display: none;"></p>
 
         <p class="help">❓ Trouble logging in? <a href="pages/contact-admin.html">Contact Admin</a></p>
         <p class="help">Don't have an account? <a href="pages/sign-up.html">Sign Up</a></p>
@@ -40,6 +41,64 @@
         </div>
         <a href="pages/developer.html" class="dev-link">Developer</a>
     </div>
+
+    <script>
+        function handleLogin() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var errorMsg = document.getElementById('errorMsg');
+
+            // Simple validation
+            if (email === '' || password === '') {
+                errorMsg.textContent = 'Please enter email and password';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Send login request to PHP
+            var formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            fetch('api/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Save user info to localStorage
+                    localStorage.setItem('user_id',    data.user_id);
+                    localStorage.setItem('email',       data.email);
+                    localStorage.setItem('role',        data.role);
+                    localStorage.setItem('full_name',   data.full_name);
+                    localStorage.setItem('student_id',  data.student_id);
+                    localStorage.setItem('type',        data.type);
+
+                    // Redirect based on user type
+                    if (data.type === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'pages/dashboard.html';
+                    }
+                } else {
+                    errorMsg.textContent = data.message;
+                    errorMsg.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                errorMsg.textContent = 'Login error: ' + error;
+                errorMsg.style.display = 'block';
+            });
+        }
+
+        // Allow Enter key to login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+    </script>
 
 </body>
 

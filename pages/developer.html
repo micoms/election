@@ -17,121 +17,8 @@
             Meet the developers behind the Student Council Election 2026 system.
         </p>
         
-        <div class="dev-grid">
-            <!-- Developer 1 -->
-            <div class="dev-card">
-                <div class="dev-info">
-                    <div class="dev-avatar">👨‍💻</div>
-                    <h2 class="dev-name">Mark Reyes</h2>
-                    <p class="dev-role">Lead Developer</p>
-                </div>
-                <div class="dev-details">
-                    <div class="dev-item">
-                        <span class="dev-label">Course</span>
-                        <span class="dev-value">BS Computer Science</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Year</span>
-                        <span class="dev-value">3rd Year</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Department</span>
-                        <span class="dev-value">CCS</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Developer 2 -->
-            <div class="dev-card">
-                <div class="dev-info">
-                    <div class="dev-avatar">👩‍🎨</div>
-                    <h2 class="dev-name">Sarah Gomez</h2>
-                    <p class="dev-role">UI/UX Designer</p>
-                </div>
-                <div class="dev-details">
-                    <div class="dev-item">
-                        <span class="dev-label">Course</span>
-                        <span class="dev-value">BS Information Tech</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Year</span>
-                        <span class="dev-value">4th Year</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Department</span>
-                        <span class="dev-value">CCS</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Developer 3 -->
-            <div class="dev-card">
-                <div class="dev-info">
-                    <div class="dev-avatar">🧑‍💻</div>
-                    <h2 class="dev-name">David Silva</h2>
-                    <p class="dev-role">Frontend Engineer</p>
-                </div>
-                <div class="dev-details">
-                    <div class="dev-item">
-                        <span class="dev-label">Course</span>
-                        <span class="dev-value">BS Computer Science</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Year</span>
-                        <span class="dev-value">3rd Year</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Department</span>
-                        <span class="dev-value">CCS</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Developer 4 -->
-            <div class="dev-card">
-                <div class="dev-info">
-                    <div class="dev-avatar">👩‍💻</div>
-                    <h2 class="dev-name">Chloe Torres</h2>
-                    <p class="dev-role">Backend Engineer</p>
-                </div>
-                <div class="dev-details">
-                    <div class="dev-item">
-                        <span class="dev-label">Course</span>
-                        <span class="dev-value">BS Information Tech</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Year</span>
-                        <span class="dev-value">2nd Year</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Department</span>
-                        <span class="dev-value">CCS</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Developer 5 -->
-            <div class="dev-card">
-                <div class="dev-info">
-                    <div class="dev-avatar">👨‍🔧</div>
-                    <h2 class="dev-name">James Lee</h2>
-                    <p class="dev-role">QA Tester</p>
-                </div>
-                <div class="dev-details">
-                    <div class="dev-item">
-                        <span class="dev-label">Course</span>
-                        <span class="dev-value">BS Information Systems</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Year</span>
-                        <span class="dev-value">3rd Year</span>
-                    </div>
-                    <div class="dev-item">
-                        <span class="dev-label">Department</span>
-                        <span class="dev-value">CCS</span>
-                    </div>
-                </div>
-            </div>
+        <div class="dev-grid" id="developerGrid">
+            <p>Loading developer information...</p>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
@@ -144,6 +31,51 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Load developers from database
+        window.addEventListener('load', function() {
+            fetch('../api/get_data.php?endpoint=developers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const grid = document.getElementById('developerGrid');
+                        grid.innerHTML = '';
+                        
+                        const avatars = ['👨‍💻', '👩‍🎨', '🧑‍💻', '👩‍💻', '👨‍🔧', '👨‍🔬', '👩‍⚖️'];
+                        
+                        data.data.forEach((dev, index) => {
+                            const card = document.createElement('div');
+                            card.className = 'dev-card';
+                            card.innerHTML = `
+                                <div class="dev-info">
+                                    <div class="dev-avatar">${avatars[index % avatars.length]}</div>
+                                    <h2 class="dev-name">${dev.name}</h2>
+                                    <p class="dev-role">${dev.role || 'Developer'}</p>
+                                </div>
+                                <div class="dev-details">
+                                    <div class="dev-item">
+                                        <span class="dev-label">Year</span>
+                                        <span class="dev-value">${dev.year ? dev.year + (dev.year === 1 ? 'st' : dev.year === 2 ? 'nd' : dev.year === 3 ? 'rd' : 'th') + ' Year' : 'N/A'}</span>
+                                    </div>
+                                    <div class="dev-item">
+                                        <span class="dev-label">Department</span>
+                                        <span class="dev-value">${dev.department || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        });
+                    } else {
+                        document.getElementById('developerGrid').innerHTML = '<p style="color: red;">Failed to load developer information</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading developers:', error);
+                    document.getElementById('developerGrid').innerHTML = '<p style="color: red;">Error loading developer information</p>';
+                });
+        });
+    </script>
 
 </body>
 

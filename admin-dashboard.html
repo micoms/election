@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Election 2026</title>
+    <link rel="stylesheet" href="css/admin-dash.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1>⚙️ Admin Dashboard</h1>
+            <span class="election-badge" id="electionBadge">Loading...</span>
+        </div>
+        <div class="user-info">
+            <span id="userDisplay"></span>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-btn-candidates"   onclick="switchTab('candidates')">📋 Candidates</button>
+        <button class="tab-btn" id="tab-btn-positions"    onclick="switchTab('positions')">🗳️ Positions</button>
+        <button class="tab-btn" id="tab-btn-departments"  onclick="switchTab('departments')">🏢 Departments</button>
+        <button class="tab-btn" id="tab-btn-voters"       onclick="switchTab('voters')">👥 Voters</button>
+        <button class="tab-btn" id="tab-btn-results"      onclick="switchTab('results')">📊 Results</button>
+        <button class="tab-btn" id="tab-btn-settings"     onclick="switchTab('settings')">⚙️ Settings</button>
+        <button class="tab-btn" id="tab-btn-developers"   onclick="switchTab('developers')">👨‍💻 Developers</button>
+    </div>
+
+    <!-- ── TAB: CANDIDATES ── -->
+    <div id="tab-candidates" class="tab-content active">
+        <div class="two-col">
+            <div class="section">
+                <h2>Add New Candidate</h2>
+                <form id="addCandidateForm">
+                    <div class="form-group">
+                        <label>Position:</label>
+                        <select id="position" required>
+                            <option value="">Select Position</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Candidate Name:</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Department:</label>
+                        <select id="candidateDept">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year Level:</label>
+                        <select id="candidateYear">
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="5">5th Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload Image (Cloud):</label>
+                        <input type="file" id="imageFile" accept="image/*" required>
+                        <p id="uploadStatus" style="font-size:13px; margin-top:6px;"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Description / Platform:</label>
+                        <textarea id="description" placeholder="Write about the candidate" rows="3"></textarea>
+                    </div>
+                    <button type="button" onclick="addCandidate()" class="btn-add">Add Candidate</button>
+                </form>
+            </div>
+            <div class="section">
+                <h2>Manage Candidates</h2>
+                <div id="candidatesList" class="candidates-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: POSITIONS ── -->
+    <div id="tab-positions" class="tab-content">
+        <div class="two-col">
+            <div class="section">
+                <h2>Add Position</h2>
+                <div class="form-group">
+                    <label>Position Name:</label>
+                    <input type="text" id="positionName" placeholder="e.g. Senator">
+                </div>
+                <div class="form-group">
+                    <label>Color:</label>
+                    <input type="color" id="positionColor" value="#1b9a9a" style="height:40px; padding:2px;">
+                </div>
+                <button class="btn-add" onclick="addPosition()">Add Position</button>
+            </div>
+            <div class="section">
+                <h2>Manage Positions</h2>
+                <p style="color:#888; font-size:12px; margin-bottom:14px;">Order controls the voting flow and sidebar.</p>
+                <div id="positionsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: VOTERS ── -->
+    <div id="tab-voters" class="tab-content">
+        <div class="section">
+            <div class="section-header-row">
+                <h2>Registered Voters</h2>
+                <div class="stat-pills" id="voterStats"></div>
+            </div>
+            <div id="votersTable"></div>
+        </div>
+    </div>
+
+    <!-- ── TAB: RESULTS ── -->
+    <div id="tab-results" class="tab-content">
+        <div class="section">
+            <div class="section-header-row">
+                <h2>Live Results</h2>
+                <button class="btn-refresh" onclick="loadResults()">🔄 Refresh</button>
+            </div>
+            <div id="resultsContainer"><p style="color:#999;">Loading results...</p></div>
+        </div>
+    </div>
+
+    <!-- ── TAB: SETTINGS ── -->
+    <div id="tab-settings" class="tab-content">
+
+        <!-- Row 1: Status + Registration -->
+        <div class="two-col" style="margin-bottom:22px;">
+            <div class="section">
+                <h2>Voting Status</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:20px;">When closed, voters cannot access voting pages.</p>
+                <div class="toggle-row">
+                    <span id="statusLabel" style="font-size:18px; font-weight:700;">Loading...</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="electionToggle" onchange="toggleElection()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Voter Registration</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:20px;">When off, the Sign Up page shows a "closed" message.</p>
+                <div class="toggle-row">
+                    <span id="registrationLabel" style="font-size:18px; font-weight:700;">Loading...</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="registrationToggle" onchange="toggleRegistration()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Election Info -->
+        <div class="section" style="margin-bottom:22px;">
+            <h2>🎨 Election Branding</h2>
+            <p style="color:#666; font-size:13px; margin-bottom:18px;">These values appear on all voter-facing pages.</p>
+            <div class="two-col">
+                <div>
+                    <div class="form-group">
+                        <label>Organization Name (sidebar title):</label>
+                        <input type="text" id="orgName" placeholder="Student Vote">
+                    </div>
+                    <div class="form-group">
+                        <label>Election Title (sidebar subtitle):</label>
+                        <input type="text" id="electionTitle" placeholder="Student Council Election 2026">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Election Year:</label>
+                        <input type="text" id="electionYear" placeholder="2026">
+                    </div>
+                </div>
+            </div>
+            <button class="btn-add" style="width:auto; padding:10px 24px;" onclick="saveBranding()">Save Branding</button>
+        </div>
+
+        <!-- Row 3: Admin Profile + Danger Zone -->
+        <div class="two-col">
+            <div class="section">
+                <h2>👤 Admin Profile</h2>
+                <div class="form-group">
+                    <label>Display Name:</label>
+                    <input type="text" id="adminName" placeholder="Your name">
+                </div>
+                <hr style="border:none; border-top:1px solid #eee; margin:16px 0;">
+                <div class="form-group">
+                    <label>Current Password:</label>
+                    <input type="password" id="currentPass" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>New Password:</label>
+                    <input type="password" id="newPass" placeholder="••••••••">
+                </div>
+                <button class="btn-add" onclick="saveProfile()">Save Profile</button>
+            </div>
+            <div class="section danger-section">
+                <h2>⚠️ Danger Zone</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:20px;">These actions are irreversible.</p>
+                <button class="btn-danger" onclick="resetAllVotes()">🗑️ Reset All Votes</button>
+                <p style="font-size:12px; color:#999; margin-top:10px;">Clears all votes and resets every voter's status to "not voted".</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── TAB: DEPARTMENTS ── -->
+    <div id="tab-departments" class="tab-content">
+        <div class="two-col">
+            <div class="section">
+                <h2>Add Department</h2>
+                <div class="form-group">
+                    <label>Department Name:</label>
+                    <input type="text" id="deptName" placeholder="e.g. College of Law">
+                </div>
+                <div class="form-group">
+                    <label>Short Code (optional):</label>
+                    <input type="text" id="deptCode" placeholder="e.g. COL">
+                </div>
+                <button class="btn-add" onclick="addDepartment()">Add Department</button>
+            </div>
+            <div class="section">
+                <h2>Manage Departments</h2>
+                <p style="color:#888; font-size:12px; margin-bottom:14px;">These appear in the voter registration form.</p>
+                <div id="departmentsList"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── TAB: DEVELOPERS ── -->
+    <div id="tab-developers" class="tab-content">
+        <div class="two-col">
+            <div class="section">
+                <h2>Add Developer</h2>
+                <div class="form-group">
+                    <label>Full Name:</label>
+                    <input type="text" id="devName" placeholder="e.g. Juan dela Cruz">
+                </div>
+                <div class="form-group">
+                    <label>Role:</label>
+                    <input type="text" id="devRole" placeholder="e.g. Lead Developer">
+                </div>
+
+                <div class="form-group">
+                    <label>Year Level:</label>
+                    <select id="devYear">
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3" selected>3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department:</label>
+                    <select id="devDepartment"></select>
+                </div>
+                <button class="btn-add" onclick="addDeveloper()">Add Developer</button>
+            </div>
+            <div class="section">
+                <h2>Manage Developers</h2>
+                <div id="developersList"><p style="color:#999;">No developers yet.</p></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let uploadedImageUrl = '';
+    let allPositions = [];
+
+    // ── Init ──
+    window.onload = function() {
+        const role     = localStorage.getItem('role');
+        const fullName = localStorage.getItem('full_name');
+
+        if (role !== 'admin') {
+            alert('Access denied');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        document.getElementById('userDisplay').textContent = fullName;
+        document.getElementById('imageFile').addEventListener('change', handleImageUpload);
+
+        loadPositions();
+        loadCandidates();
+        loadElectionStatus();
+        loadDepartmentsDropdown();
+    };
+
+    // ── Tab Switching ──
+    function switchTab(name) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        document.getElementById('tab-btn-' + name).classList.add('active');
+
+        if (name === 'voters')       loadVoters();
+        if (name === 'results')      loadResults();
+        if (name === 'positions')    loadPositionsList();
+        if (name === 'settings')     loadElectionStatus();
+        if (name === 'developers')   loadDevelopers();
+        if (name === 'departments')  loadDepartmentsList();
+    }
+
+    // ── Election Status + Settings ──
+    function loadElectionStatus() {
+        fetch('api/admin_settings.php')
+            .then(r => r.json())
+            .then(data => {
+                const s = data.data;
+
+                // Header badge
+                const open = s.election_open === '1';
+                const badge = document.getElementById('electionBadge');
+                badge.textContent = open ? '● Voting Open' : '● Voting Closed';
+                badge.className   = 'election-badge ' + (open ? 'badge-open' : 'badge-closed');
+
+                // Voting toggle
+                document.getElementById('electionToggle').checked = open;
+                document.getElementById('statusLabel').textContent = open ? '🟢 Voting is Open' : '🔴 Voting is Closed';
+                document.getElementById('statusLabel').style.color = open ? '#27ae60' : '#e74c3c';
+
+                // Registration toggle
+                const reg = s.allow_registration === '1';
+                document.getElementById('registrationToggle').checked = reg;
+                document.getElementById('registrationLabel').textContent = reg ? '🟢 Registration Open' : '🔴 Registration Closed';
+                document.getElementById('registrationLabel').style.color = reg ? '#27ae60' : '#e74c3c';
+
+                // Branding fields
+                document.getElementById('orgName').value       = s.org_name       || '';
+                document.getElementById('electionTitle').value = s.election_title  || '';
+                document.getElementById('electionYear').value  = s.election_year   || '';
+
+                // Admin name
+                document.getElementById('adminName').value = localStorage.getItem('full_name') || '';
+            });
+    }
+
+    function toggleElection() {
+        const val = document.getElementById('electionToggle').checked ? '1' : '0';
+        saveSetting('election_open', val, loadElectionStatus);
+    }
+
+    function toggleRegistration() {
+        const val = document.getElementById('registrationToggle').checked ? '1' : '0';
+        saveSetting('allow_registration', val, loadElectionStatus);
+    }
+
+    function saveSetting(key, value, callback) {
+        const fd = new FormData();
+        fd.append('key', key);
+        fd.append('value', value);
+        fetch('api/admin_settings.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(() => { if (callback) callback(); });
+    }
+
+    function saveBranding() {
+        const fields = {
+            org_name:       document.getElementById('orgName').value.trim(),
+            election_title: document.getElementById('electionTitle').value.trim(),
+            election_year:  document.getElementById('electionYear').value.trim(),
+        };
+        let saved = 0;
+        Object.entries(fields).forEach(([key, value]) => {
+            if (!value) { saved++; return; }
+            saveSetting(key, value, () => {
+                saved++;
+                if (saved === Object.keys(fields).length) alert('Branding saved!');
+            });
+        });
+    }
+
+    function saveProfile() {
+        const fd = new FormData();
+        fd.append('user_id',          localStorage.getItem('user_id'));
+        fd.append('full_name',         document.getElementById('adminName').value.trim());
+        fd.append('current_password',  document.getElementById('currentPass').value);
+        fd.append('new_password',      document.getElementById('newPass').value);
+
+        fetch('api/admin_update_profile.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    localStorage.setItem('full_name', document.getElementById('adminName').value.trim());
+                    document.getElementById('userDisplay').textContent = document.getElementById('adminName').value.trim();
+                    document.getElementById('currentPass').value = '';
+                    document.getElementById('newPass').value     = '';
+                } else { alert('Error: ' + data.message); }
+            });
+    }
+
+    function resetAllVotes() {
+        if (!confirm('Reset ALL votes? This cannot be undone.')) return;
+        if (!confirm('Are you absolutely sure? Every vote will be deleted.')) return;
+        fetch('api/admin_reset_votes.php', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => { alert(data.message); loadVoters(); });
+    }
+
+    // ── Departments Tab ──
+    function loadDepartmentsList() {
+        fetch('api/admin_departments.php')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success || data.data.length === 0) {
+                    document.getElementById('departmentsList').innerHTML = '<p style="color:#999;">No departments yet.</p>';
+                    return;
+                }
+                const html = data.data.map(d => `
+                    <div class="position-item">
+                        <span class="pos-name">${d.name}</span>
+                        <span class="pos-order">${d.code || ''}</span>
+                        <button class="btn-delete" onclick="deleteDepartment(${d.id},'${d.name.replace(/'/g,"\\'")}')">Delete</button>
+                    </div>`).join('');
+                document.getElementById('departmentsList').innerHTML = html;
+            });
+    }
+
+    function addDepartment() {
+        const name = document.getElementById('deptName').value.trim();
+        const code = document.getElementById('deptCode').value.trim();
+        if (!name) { alert('Department name is required'); return; }
+        const fd = new FormData();
+        fd.append('action', 'add'); fd.append('name', name); fd.append('code', code);
+        fetch('api/admin_departments.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('deptName').value = '';
+                    document.getElementById('deptCode').value = '';
+                    loadDepartmentsList();
+                    loadDepartmentsDropdown();
+                } else { alert('Error: ' + data.message); }
+            });
+    }
+
+    function deleteDepartment(id, name) {
+        if (!confirm('Delete department "' + name + '"? Voters registered under it will keep their data.')) return;
+        const fd = new FormData();
+        fd.append('action', 'delete'); fd.append('id', id);
+        fetch('api/admin_departments.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(() => { loadDepartmentsList(); loadDepartmentsDropdown(); });
+    }
+
+    // ── Departments dropdown (for Developers tab) ──
+    function loadDepartmentsDropdown() {
+        fetch('api/get_data.php?endpoint=departments')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                // candidateDept uses name (stored as string)
+                const cSel = document.getElementById('candidateDept');
+                if (cSel) {
+                    cSel.innerHTML = '<option value="">Select Department</option>';
+                    data.data.forEach(d => {
+                        const o = document.createElement('option');
+                        o.value = d.name; o.textContent = d.name;
+                        cSel.appendChild(o);
+                    });
+                }
+                // devDepartment uses id
+                const dSel = document.getElementById('devDepartment');
+                if (dSel) {
+                    dSel.innerHTML = '<option value="">Select Department</option>';
+                    data.data.forEach(d => {
+                        const o = document.createElement('option');
+                        o.value = d.id; o.textContent = d.name;
+                        dSel.appendChild(o);
+                    });
+                }
+            });
+    }
+
+    // ── Positions (dropdown for candidates tab) ──
+    function loadPositions() {
+        fetch('api/get_data.php?endpoint=positions')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                allPositions = data.data;
+                const sel = document.getElementById('position');
+                sel.innerHTML = '<option value="">Select Position</option>';
+                data.data.forEach(p => {
+                    const o = document.createElement('option');
+                    o.value = p.name; o.textContent = p.name;
+                    sel.appendChild(o);
+                });
+            });
+    }
+
+    // ── Positions Tab ──
+    function loadPositionsList() {
+        fetch('api/admin_positions.php')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                const container = document.getElementById('positionsList');
+                container.innerHTML = '';
+                data.data.forEach(pos => {
+                    const div = document.createElement('div');
+                    div.className = 'position-item';
+                    div.innerHTML = `
+                        <div class="pos-color-dot" style="background:${pos.color || '#1b9a9a'}"></div>
+                        <span class="pos-name">${pos.name}</span>
+                        <span class="pos-order">#${pos.order_num}</span>
+                        <div class="pos-arrows">
+                            <button class="arrow-btn" onclick="reorderPosition(${pos.id},'up')">▲</button>
+                            <button class="arrow-btn" onclick="reorderPosition(${pos.id},'down')">▼</button>
+                        </div>
+                        <button class="btn-delete" onclick="deletePosition(${pos.id},'${pos.name.replace(/'/g,"\\'")}')">Delete</button>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+    }
+
+    function addPosition() {
+        const name  = document.getElementById('positionName').value.trim();
+        const color = document.getElementById('positionColor').value;
+        if (!name) { alert('Enter a position name'); return; }
+        const fd = new FormData();
+        fd.append('action', 'add');
+        fd.append('name', name);
+        fd.append('color', color);
+        fetch('api/admin_positions.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('positionName').value = '';
+                    loadPositionsList();
+                    loadPositions(); // refresh candidate dropdown
+                } else { alert('Error: ' + data.message); }
+            });
+    }
+
+    function reorderPosition(id, direction) {
+        const fd = new FormData();
+        fd.append('action', 'reorder');
+        fd.append('id', id);
+        fd.append('direction', direction);
+        fetch('api/admin_positions.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(() => loadPositionsList());
+    }
+
+    function deletePosition(id, name) {
+        if (!confirm('Delete position "' + name + '"?\nThis will also delete all its candidates and votes.')) return;
+        const fd = new FormData();
+        fd.append('action', 'delete');
+        fd.append('id', id);
+        fetch('api/admin_positions.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) { loadPositionsList(); loadPositions(); loadCandidates(); }
+                else { alert('Error: ' + data.message); }
+            });
+    }
+
+    // ── Candidates Tab ──
+    function handleImageUpload(e) {
+        const file      = e.target.files[0];
+        const statusMsg = document.getElementById('uploadStatus');
+        if (!file) return;
+        if (file.size > 4 * 1024 * 1024) {
+            statusMsg.textContent = '✗ File too large (max 4MB)';
+            statusMsg.style.color = 'red'; return;
+        }
+        statusMsg.textContent = 'Uploading...'; statusMsg.style.color = '#666';
+        const fd = new FormData();
+        fd.append('image', file);
+        fetch('api/upload.php', { method: 'POST', body: fd })
+            .then(r => r.text()).then(text => {
+                const data = JSON.parse(text);
+                if (data.success && data.url) {
+                    uploadedImageUrl = data.url;
+                    statusMsg.textContent = '✓ Uploaded!'; statusMsg.style.color = 'green';
+                } else { throw new Error(data.message || 'Upload failed'); }
+            })
+            .catch(err => { statusMsg.textContent = '✗ ' + err.message; statusMsg.style.color = 'red'; });
+    }
+
+    function addCandidate() {
+        const position   = document.getElementById('position').value;
+        const name       = document.getElementById('name').value.trim();
+        const dept       = document.getElementById('candidateDept').value;
+        const year       = document.getElementById('candidateYear').value;
+        const description = document.getElementById('description').value;
+        if (!position || !name) { alert('Fill in position and name'); return; }
+        if (!uploadedImageUrl)  { alert('Upload an image first'); return; }
+        const fd = new FormData();
+        fd.append('position',    position);
+        fd.append('name',        name);
+        fd.append('image_url',   uploadedImageUrl);
+        fd.append('description', description);
+        fd.append('department',  dept);
+        fd.append('year',        year);
+        fetch('api/add_candidate.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Candidate added!');
+                    document.getElementById('addCandidateForm').reset();
+                    document.getElementById('uploadStatus').textContent = '';
+                    uploadedImageUrl = '';
+                    loadCandidates();
+                } else { alert('Error: ' + data.message); }
+            });
+    }
+
+    function loadCandidates() {
+        fetch('api/get_candidates.php')
+            .then(r => r.json())
+            .then(candidates => {
+                const html = candidates.map(c => {
+                    const meta = [
+                        c.department || '',
+                        c.year       ? c.year + ' yr' : ''
+                    ].filter(Boolean).join(' · ');
+                    return `
+                    <div class="candidate-card">
+                        <img src="${c.image_url}" alt="${c.name}" onerror="this.src='images/placeholder.jpg'">
+                        <h3>${c.name}</h3>
+                        <p><strong>${c.position}</strong></p>
+                        ${meta ? '<p style="font-size:12px; color:#888;">' + meta + '</p>' : ''}
+                        <p>${c.description || ''}</p>
+                        <button onclick="deleteCandidate(${c.id})" class="btn-delete">Delete</button>
+                    </div>`;
+                }).join('');
+                document.getElementById('candidatesList').innerHTML = html || '<p style="color:#999;">No candidates yet</p>';
+            });
+    }
+
+    function deleteCandidate(id) {
+        if (!confirm('Delete this candidate?')) return;
+        const fd = new FormData(); fd.append('candidate_id', id);
+        fetch('api/delete_candidate.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => { if (data.success) loadCandidates(); else alert('Error: ' + data.message); });
+    }
+
+    // ── Voters Tab ──
+    function loadVoters() {
+        fetch('api/admin_voters.php')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                const voters = data.data;
+                const total   = voters.length;
+                const voted   = voters.filter(v => v.has_voted == 1).length;
+                const notVoted = total - voted;
+
+                document.getElementById('voterStats').innerHTML = `
+                    <span class="stat-pill pill-total">Total: ${total}</span>
+                    <span class="stat-pill pill-voted">Voted: ${voted}</span>
+                    <span class="stat-pill pill-notvoted">Pending: ${notVoted}</span>
+                `;
+
+                if (voters.length === 0) {
+                    document.getElementById('votersTable').innerHTML = '<p style="color:#999; margin-top:12px;">No voters registered yet.</p>';
+                    return;
+                }
+
+                const rows = voters.map(v => `
+                    <tr>
+                        <td>${v.full_name}</td>
+                        <td>${v.student_id}</td>
+                        <td>${v.department || '—'}</td>
+                        <td>${v.year ? v.year + ' yr' : '—'}</td>
+                        <td>${v.has_voted == 1
+                            ? '<span class="badge-voted">✅ Voted</span>'
+                            : '<span class="badge-notvoted">⬜ Pending</span>'}</td>
+                        <td>
+                            <div class="action-btns">
+                                ${v.has_voted == 1
+                                    ? `<button class="btn-reset" onclick="resetVoter(${v.id},'${v.full_name.replace(/'/g,"\\'")}')">Reset</button>`
+                                    : ''}
+                                <button class="btn-delete" onclick="deleteVoter(${v.id},'${v.full_name.replace(/'/g,"\\'")}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>`).join('');
+
+                document.getElementById('votersTable').innerHTML = `
+                    <table class="voters-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Student ID</th><th>Department</th>
+                                <th>Year</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>`;
+            });
+    }
+
+    function resetVoter(id, name) {
+        if (!confirm('Reset votes for ' + name + '? They will be able to vote again.')) return;
+        const fd = new FormData(); fd.append('action', 'reset'); fd.append('voter_id', id);
+        fetch('api/admin_voters.php', { method: 'POST', body: fd })
+            .then(r => r.json()).then(() => loadVoters());
+    }
+
+    function deleteVoter(id, name) {
+        if (!confirm('Delete voter "' + name + '"? This cannot be undone.')) return;
+        const fd = new FormData(); fd.append('action', 'delete'); fd.append('voter_id', id);
+        fetch('api/admin_voters.php', { method: 'POST', body: fd })
+            .then(r => r.json()).then(() => loadVoters());
+    }
+
+    // ── Results Tab ──
+    function loadResults() {
+        fetch('api/get_data.php?endpoint=positions')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) return;
+                const container = document.getElementById('resultsContainer');
+                container.innerHTML = '';
+                data.data.forEach(pos => {
+                    fetch('api/get_vote_tally.php?position=' + encodeURIComponent(pos.name))
+                        .then(r => r.json())
+                        .then(tally => {
+                            const section = document.createElement('div');
+                            section.className = 'result-section';
+                            let html = `<h3>${pos.name}</h3>`;
+                            if (!tally.success || tally.results.length === 0) {
+                                html += '<p style="color:#aaa; font-size:13px;">No votes yet</p>';
+                            } else {
+                                tally.results.forEach(c => {
+                                    const pct = tally.total_votes > 0 ? (c.vote_count / tally.total_votes * 100).toFixed(1) : 0;
+                                    html += `
+                                        <div class="result-row">
+                                            <span class="result-name">${c.name}</span>
+                                            <div class="result-bar-bg">
+                                                <div class="result-bar-fill" style="width:${pct}%"></div>
+                                            </div>
+                                            <span class="result-count">${c.vote_count} vote${c.vote_count != 1 ? 's' : ''}</span>
+                                        </div>`;
+                                });
+                            }
+                            section.innerHTML = html;
+                            container.appendChild(section);
+                        });
+                });
+            });
+    }
+
+    // ── Developers Tab ──
+    function loadDevelopers() {
+        fetch('api/admin_developers.php')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success || data.data.length === 0) {
+                    document.getElementById('developersList').innerHTML = '<p style="color:#999;">No developers yet.</p>';
+                    return;
+                }
+                const html = data.data.map(d => `
+                    <div class="position-item">
+                        <div>
+                            <strong>${d.name}</strong>
+                            <span style="font-size:12px; color:#888; display:block;">${d.role} &bull; ${d.year ? d.year + ' yr' : ''} &bull; ${d.department || ''}</span>
+                        </div>
+                        <button class="btn-delete" onclick="deleteDeveloper(${d.id},'${d.name.replace(/'/g,"\\'")}')">Delete</button>
+                    </div>`).join('');
+                document.getElementById('developersList').innerHTML = html;
+            });
+    }
+
+    function addDeveloper() {
+        const name   = document.getElementById('devName').value.trim();
+        const role   = document.getElementById('devRole').value.trim();
+        const year   = document.getElementById('devYear').value;
+        const deptId = document.getElementById('devDepartment').value;
+
+        if (!name || !role) { alert('Name and role are required'); return; }
+
+        const fd = new FormData();
+        fd.append('action', 'add');
+        fd.append('name',          name);
+        fd.append('role',          role);
+        fd.append('year',          year);
+        fd.append('department_id', deptId);
+
+        fetch('api/admin_developers.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('devName').value = '';
+                    document.getElementById('devRole').value = '';
+                    loadDevelopers();
+                } else { alert('Error: ' + data.message); }
+            });
+    }
+
+    function deleteDeveloper(id, name) {
+        if (!confirm('Remove "' + name + '" from the developers list?')) return;
+        const fd = new FormData();
+        fd.append('action', 'delete');
+        fd.append('id', id);
+        fetch('api/admin_developers.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(() => loadDevelopers());
+    }
+
+    // ── Auth ──
+    function logout() {
+        ['user_id','email','role','full_name','student_id','type'].forEach(k => localStorage.removeItem(k));
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>

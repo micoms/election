@@ -15,7 +15,8 @@
             <h2>Student Council Voting</h2>
         </div>
         <div class="top-user">
-            <span>Welcome, User</span>
+            <span id="topUserDisplay"></span>
+            <button onclick="logout()" style="background:#cc4444; color:white; border:none; padding:7px 14px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;">Logout</button>
             <div class="top-user-icon">👤</div>
         </div>
     </div>
@@ -34,83 +35,9 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-president">--</div>
-                <div>
-                    <p class="label">PRESIDENT</p>
-                    <h3 id="name-president">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="president.html"><button class="edit-btn">Edit</button></a>
+        <div id="reviewRows">
+            <p>Loading positions...</p>
         </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-vicepresident">--</div>
-                <div>
-                    <p class="label">VICE PRESIDENT</p>
-                    <h3 id="name-vicepresident">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="vice-president.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-secretary">--</div>
-                <div>
-                    <p class="label">SECRETARY</p>
-                    <h3 id="name-secretary">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="secretary.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-treasurer">--</div>
-                <div>
-                    <p class="label">TREASURER</p>
-                    <h3 id="name-treasurer">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="treasurer.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-auditor">--</div>
-                <div>
-                    <p class="label">AUDITOR</p>
-                    <h3 id="name-auditor">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="auditor.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-pio">--</div>
-                <div>
-                    <p class="label">PIO</p>
-                    <h3 id="name-pio">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="pio.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
-        <div class="row">
-            <div class="row-left">
-                <div class="circle" id="avatar-businessmanager">--</div>
-                <div>
-                    <p class="label">BUSINESS MANAGER</p>
-                    <h3 id="name-businessmanager">No Selection Made</h3>
-                </div>
-            </div>
-            <a href="business-manager.html"><button class="edit-btn">Edit</button></a>
-        </div>
-
 
         <div class="confirm">
             <input type="checkbox" id="confirmBox">
@@ -141,72 +68,201 @@
     </div>
 
     <script>
-        var candidateImages = {
-            "Alex Rivera": "../images/alex_rivera.png",
-            "Jordan Lee": "../images/jordan_lee.png",
-            "Sam Smith": "../images/sam_smith.png",
-            "Maria Santos": "../images/maria_santos.png",
-            "Chris Reyes": "../images/chris_reyes.png",
-            "Taylor Brooks": "../images/taylor_brooks.png",
-            "Emily Chen": "../images/emily_chen.png",
-            "Daniel Park": "../images/daniel_park.png",
-            "Aisha Khan": "../images/aisha_khan.png",
-            "Ryan Garcia": "../images/ryan_garcia.png",
-            "Nina Flores": "../images/nina_flores.png",
-            "Jake Torres": "../images/jake_torres.png",
-            "Liam Cruz": "../images/liam_cruz.png",
-            "Sophie Tan": "../images/sophie_tan.png",
-            "Marcus Webb": "../images/marcus_webb.png",
-            "Bianca Reyes": "../images/bianca_reyes.png",
-            "Carlo Mendoza": "../images/carlo_mendoza.png",
-            "Hazel Lim": "../images/hazel_lim.png",
-            "Adrian Co": "../images/adrian_co.png",
-            "Patricia Gomez": "../images/patricia_gomez.png",
-            "Vincent Ong": "../images/vincent_ong.png"
+        let allPositions = []; // Will be populated from database
+        let voterId = null;
+        let selectedVotes = {};
+
+        window.onload = function() {
+            voterId = localStorage.getItem('user_id');
+            const userName = localStorage.getItem('full_name');
+
+            if (!voterId) {
+                alert('You must be logged in to vote');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            document.getElementById('topUserDisplay').textContent = 'Welcome, ' + userName;
+
+            // Load positions from database, then populate selections
+            loadPositionsAndSelections();
         };
 
-        function setAvatar(avatarId, name) {
-            var el = document.getElementById(avatarId);
-            if (candidateImages[name]) {
-                el.innerHTML = '<img src="' + candidateImages[name] + '" alt="' + name + '">';
-                el.classList.add("has-photo");
+        function loadPositionsAndSelections() {
+            fetch('../api/get_data.php?endpoint=positions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.length > 0) {
+                        allPositions = data.data;
+                        buildReviewRows();
+                        loadSelections();
+                    } else {
+                        document.getElementById('reviewRows').innerHTML =
+                            '<p style="color: red;">No positions found. Please contact admin.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading positions:', error);
+                    document.getElementById('reviewRows').innerHTML =
+                        '<p style="color: red;">Error loading positions.</p>';
+                });
+        }
+
+        function buildReviewRows() {
+            const container = document.getElementById('reviewRows');
+            container.innerHTML = '';
+
+            allPositions.forEach(pos => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `
+                    <div class="row-left">
+                        <div class="circle" id="avatar-${pos.name}" style="background-color: ${pos.color || '#1b9a9a'}">--</div>
+                        <div>
+                            <p class="label">${pos.name.toUpperCase()}</p>
+                            <h3 id="name-${pos.name}">No Selection Made</h3>
+                        </div>
+                    </div>
+                    <a href="vote.html?position=${encodeURIComponent(pos.name)}"><button class="edit-btn">Edit</button></a>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function loadSelections() {
+            allPositions.forEach(pos => {
+                const posName = pos.name;
+                const candidateId = localStorage.getItem('vote-' + posName);
+                const candidateName = localStorage.getItem('vote-' + posName + '-name');
+
+                if (candidateId && candidateName) {
+                    selectedVotes[posName] = {
+                        id: candidateId,
+                        name: candidateName
+                    };
+                    displaySelection(posName, candidateName, pos.color || '#1b9a9a');
+                }
+            });
+        }
+
+        function displaySelection(position, name, color) {
+            const nameId = 'name-' + position;
+            const avatarId = 'avatar-' + position;
+            const imageUrl = localStorage.getItem('vote-' + position + '-image');
+
+            document.getElementById(nameId).textContent = name;
+
+            const avatarEl = document.getElementById(avatarId);
+
+            if (imageUrl) {
+                // Display image
+                avatarEl.innerHTML = `<img src="${imageUrl}" alt="${name}" onerror="this.parentElement.innerHTML='${name.charAt(0).toUpperCase()}'; this.parentElement.classList.remove('has-photo');" />`;
+                avatarEl.classList.add('has-photo');
             } else {
-                el.textContent = name[0];
+                // Fallback to first letter
+                avatarEl.textContent = name.charAt(0).toUpperCase();
+                avatarEl.classList.remove('has-photo');
             }
-        }
 
-        function setSelection(storageKey, nameId, avatarId) {
-            var savedVote = localStorage.getItem(storageKey);
-            if (savedVote) {
-                document.getElementById(nameId).textContent = savedVote;
-                setAvatar(avatarId, savedVote);
-            }
+            avatarEl.style.backgroundColor = color;
         }
-
-        setSelection("vote-president", "name-president", "avatar-president");
-        setSelection("vote-vicepresident", "name-vicepresident", "avatar-vicepresident");
-        setSelection("vote-secretary", "name-secretary", "avatar-secretary");
-        setSelection("vote-treasurer", "name-treasurer", "avatar-treasurer");
-        setSelection("vote-auditor", "name-auditor", "avatar-auditor");
-        setSelection("vote-pio", "name-pio", "avatar-pio");
-        setSelection("vote-businessmanager", "name-businessmanager", "avatar-businessmanager");
 
         function submitBallot() {
-            var checkbox = document.getElementById("confirmBox");
-            if (checkbox.checked === false) {
+            const checkbox = document.getElementById("confirmBox");
+            if (!checkbox.checked) {
                 alert("Please check the confirmation box first.");
                 return;
             }
 
-            document.getElementById("popupArea").style.display = "block";
+            // Check if at least one vote was made
+            if (Object.keys(selectedVotes).length === 0) {
+                alert("Please select at least one candidate before submitting.");
+                return;
+            }
 
-            localStorage.removeItem("vote-president");
-            localStorage.removeItem("vote-vicepresident");
-            localStorage.removeItem("vote-secretary");
-            localStorage.removeItem("vote-treasurer");
-            localStorage.removeItem("vote-auditor");
-            localStorage.removeItem("vote-pio");
-            localStorage.removeItem("vote-businessmanager");
+            // Save all votes to database
+            saveVotesToDatabase();
+        }
+
+        function saveVotesToDatabase() {
+            const positionNames = allPositions.map(p => p.name);
+            const votesToSave = Object.keys(selectedVotes).length;
+
+            if (votesToSave === 0) {
+                submitFinalVote();
+                return;
+            }
+
+            const savePromises = positionNames
+                .filter(position => selectedVotes[position])
+                .map(position => {
+                    const formData = new FormData();
+                    formData.append('voter_id', voterId);
+                    formData.append('position', position);
+                    formData.append('candidate_id', selectedVotes[position].id);
+
+                    return fetch('../api/save_vote.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            throw new Error('Failed to save vote for ' + position + ': ' + data.message);
+                        }
+                        return data;
+                    });
+                });
+
+            Promise.all(savePromises)
+                .then(() => {
+                    // All votes saved successfully — finalize
+                    submitFinalVote();
+                })
+                .catch(error => {
+                    console.error('Error saving vote:', error);
+                    alert('Error saving votes: ' + error.message + '\nPlease try again.');
+                });
+        }
+
+        function submitFinalVote() {
+            const formData = new FormData();
+            formData.append('voter_id', voterId);
+
+            fetch('../api/submit_votes.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success popup
+                    document.getElementById("popupArea").style.display = "block";
+                    document.getElementById("receiptId").textContent = '#VOTE-2026-' + voterId;
+
+                    // Clear localStorage vote selections
+                    allPositions.forEach(pos => {
+                        localStorage.removeItem('vote-' + pos.name);
+                        localStorage.removeItem('vote-' + pos.name + '-name');
+                        localStorage.removeItem('vote-' + pos.name + '-image');
+                    });
+
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 3000);
+                } else {
+                    alert('Error submitting vote: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting vote:', error);
+                alert('Error submitting vote. Please try again.');
+            });
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../index.html';
         }
     </script>
 </body>

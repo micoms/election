@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Vote</title>
+    <link rel="stylesheet" href="../css/dash.css" />
+</head>
+
+<body>
+    <div class="page">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🗳️</div>
+                <div>
+                    <h2>Student Vote</h2>
+                    <p>Fall Election 2026</p>
+                </div>
+            </div>
+
+            <div class="menu" id="sidebarMenu">
+                <a href="dashboard.html" class="link">Dashboard</a>
+                <p class="menu-label">BALLOT SECTIONS</p>
+                <!-- Position links loaded dynamically -->
+            </div>
+
+            <div class="user-info">
+                <div class="user-icon">👤</div>
+                <div>
+                    <h3 id="userName"></h3>
+                    <p id="userStudentId"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="step-bar" id="stepBar">
+                Loading...
+            </div>
+
+            <div class="content">
+                <h1 id="pageTitle">Cast your vote</h1>
+                <p class="subtitle" id="pageSubtitle">
+                    Select one candidate.
+                </p>
+
+                <div class="cards" id="candidatesContainer">
+                    <p>Loading candidates...</p>
+                </div>
+
+                <div class="notice">
+                    You can change your selection at any time before final
+                    submission.
+                </div>
+            </div>
+
+            <div class="bottom">
+                <a href="#" id="backLink">Back</a>
+                <div class="your-pick">
+                    Your pick: <span id="pickName">None yet</span>
+                </div>
+                <a href="#" id="nextLink"><button class="next-btn" id="nextBtn">
+                        Next →
+                    </button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get position from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const POSITION = urlParams.get('position');
+
+        let voterId = null;
+        let candidates = [];
+        let allPositions = []; // All positions from database, ordered
+
+        window.onload = function() {
+            if (!POSITION) {
+                alert('No position specified');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Get voter info from localStorage
+            voterId = localStorage.getItem('user_id');
+            const userName = localStorage.getItem('full_name');
+            const studentId = localStorage.getItem('student_id');
+
+            if (!voterId) {
+                alert('You must be logged in to vote');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userStudentId').textContent = 'Student ID: ' + studentId;
+
+            // Set page title
+            document.title = 'Student Vote - ' + POSITION;
+            document.getElementById('pageTitle').textContent = 'Cast your vote for ' + POSITION;
+            document.getElementById('pageSubtitle').textContent = 'Select one candidate for ' + POSITION + '.';
+
+            // Load positions from database, then set up navigation
+            loadPositions();
+                loadBranding();
+
+            // Check election status before loading candidates
+            fetch('../api/admin_settings.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data.election_open === '0') {
+                        document.getElementById('candidatesContainer').innerHTML =
+                            '<div style="text-align:center; padding:40px 20px;">' +
+                            '<div style="font-size:48px; margin-bottom:16px;">🔒</div>' +
+                            '<h2 style="color:#e74c3c; margin-bottom:10px;">Voting is Closed</h2>' +
+                            '<p style="color:#666;">The administrator has closed voting. Please check back later.</p>' +
+                            '</div>';
+                        document.getElementById('nextBtn').disabled = true;
+                        document.getElementById('nextBtn').style.opacity = '0.5';
+                    } else {
+                        loadCandidates();
+                        const saved = localStorage.getItem('vote-' + POSITION);
+                        if (saved) updatePickDisplay();
+                    }
+                })
+                .catch(() => {
+                    // If settings unreachable, allow voting
+                    loadCandidates();
+                    const saved = localStorage.getItem('vote-' + POSITION);
+                    if (saved) updatePickDisplay();
+                });
+        };
+
+        function loadPositions() {
+            fetch('../api/get_data.php?endpoint=positions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.length > 0) {
+                        allPositions = data.data; // Already ordered by order_num
+                        buildSidebar();
+                        setupNavigation();
+                    } else {
+                        console.error('No positions found in database');
+                    }
+                })
+                .catch(error => console.error('Error loading positions:', error));
+        }
+
+        function buildSidebar() {
+            const menu = document.getElementById('sidebarMenu');
+            // Keep dashboard link and label, rebuild position links
+            menu.innerHTML = '<a href="dashboard.html" class="link">Dashboard</a>' +
+                '<p class="menu-label">BALLOT SECTIONS</p>';
+
+            allPositions.forEach((pos, index) => {
+                const a = document.createElement('a');
+                a.href = 'vote.html?position=' + encodeURIComponent(pos.name);
+                a.className = 'link';
+                if (pos.name === POSITION) {
+                    a.classList.add('current');
+                }
+                a.textContent = pos.name;
+                menu.appendChild(a);
+            });
+
+            // Add Review & Submit link
+            const reviewLink = document.createElement('a');
+            reviewLink.href = 'review.html';
+            reviewLink.className = 'link';
+            reviewLink.textContent = 'Review & Submit';
+            menu.appendChild(reviewLink);
+
+            // Add Tally link
+            const tallyLink = document.createElement('a');
+            tallyLink.href = 'tally.html';
+            tallyLink.className = 'link last';
+            tallyLink.textContent = '📊 Tally';
+            menu.appendChild(tallyLink);
+
+            const logoutLink = document.createElement('a');
+            logoutLink.href = '#';
+            logoutLink.className = 'link';
+            logoutLink.style.cssText = 'color:#cc4444; margin-top:auto;';
+            logoutLink.textContent = '🚪 Logout';
+            logoutLink.onclick = logout;
+            menu.appendChild(logoutLink);
+        }
+
+        function setupNavigation() {
+            const currentIndex = allPositions.findIndex(p => p.name === POSITION);
+            const totalPositions = allPositions.length;
+
+            if (currentIndex === -1) {
+                alert('Position "' + POSITION + '" not found');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Step bar
+            const stepNum = currentIndex + 1;
+            document.getElementById('stepBar').textContent =
+                'Step ' + stepNum + ' of ' + totalPositions + ' \u2022 ' + POSITION + ' Election';
+
+            // Back link
+            const backLink = document.getElementById('backLink');
+            if (currentIndex === 0) {
+                backLink.href = 'dashboard.html';
+                backLink.textContent = 'Back to Dashboard';
+            } else {
+                const prevPosition = allPositions[currentIndex - 1].name;
+                backLink.href = 'vote.html?position=' + encodeURIComponent(prevPosition);
+                backLink.textContent = 'Back';
+            }
+
+            // Next link & button
+            const nextLink = document.getElementById('nextLink');
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentIndex === totalPositions - 1) {
+                // Last position — go to review
+                nextLink.href = 'review.html';
+                nextBtn.textContent = 'Next: Review & Submit →';
+            } else {
+                const nextPosition = allPositions[currentIndex + 1].name;
+                nextLink.href = 'vote.html?position=' + encodeURIComponent(nextPosition);
+                nextBtn.textContent = 'Next: ' + nextPosition + ' →';
+            }
+
+            // Skip link (same as next)
+            // The "back" link already doubles as skip for first position
+        }
+
+        function loadCandidates() {
+            fetch('../api/get_candidates_by_position.php?position=' + encodeURIComponent(POSITION))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.candidates.length > 0) {
+                        candidates = data.candidates;
+                        renderCandidates();
+                    } else {
+                        document.getElementById('candidatesContainer').innerHTML =
+                            '<p style="color: red;">No candidates found for this position</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading candidates:', error);
+                    document.getElementById('candidatesContainer').innerHTML =
+                        '<p style="color: red;">Error loading candidates</p>';
+                });
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidatesContainer');
+            container.innerHTML = '';
+
+            candidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = 'card-' + candidate.id;
+
+                const savedVote = localStorage.getItem('vote-' + POSITION);
+                const isSelected = savedVote == candidate.id;
+
+                if (isSelected) {
+                    card.style.border = '4px solid #1b9a9a';
+                }
+
+                const meta = [
+                    candidate.department || '',
+                    candidate.year       ? candidate.year + (candidate.year == 1 ? 'st' : candidate.year == 2 ? 'nd' : candidate.year == 3 ? 'rd' : 'th') + ' Year' : ''
+                ].filter(Boolean).join(' · ');
+
+                card.innerHTML = `
+                    <div class="card-photo">
+                        <img src="${candidate.image_url || '../images/placeholder.jpg'}" alt="${candidate.name}" onerror="this.src='../images/placeholder.jpg'" />
+                    </div>
+                    <div class="card-text">
+                        <h2>${candidate.name}</h2>
+                        ${meta ? `<p style="font-size:13px; color:#1b9a9a; font-weight:600; margin-bottom:6px;">${meta}</p>` : ''}
+                        <p class="about">${candidate.description || 'No description available'}</p>
+                        <button id="btn-${candidate.id}" class="pick-btn ${isSelected ? 'unselect-btn' : ''}"
+                            onclick="vote(${candidate.id}, '${candidate.name.replace(/'/g, "\\'")}')">
+                            ${isSelected ? 'Unselect' : 'Select Candidate'}
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function vote(candidateId, candidateName) {
+            const savedVote = localStorage.getItem('vote-' + POSITION);
+
+            if (savedVote == candidateId) {
+                // Unselect
+                localStorage.removeItem('vote-' + POSITION);
+                localStorage.removeItem('vote-' + POSITION + '-name');
+                localStorage.removeItem('vote-' + POSITION + '-image');
+            } else {
+                // Select - find the candidate object to get the image URL
+                const candidate = candidates.find(c => c.id == candidateId);
+                localStorage.setItem('vote-' + POSITION, candidateId);
+                localStorage.setItem('vote-' + POSITION + '-name', candidateName);
+                localStorage.setItem('vote-' + POSITION + '-image', candidate.image_url || '../images/placeholder.jpg');
+            }
+
+            renderCandidates();
+            updatePickDisplay();
+        }
+
+        function updatePickDisplay() {
+            const saved = localStorage.getItem('vote-' + POSITION + '-name');
+            document.getElementById('pickName').textContent = saved || 'None yet';
+        }
+
+        function loadBranding() {
+            fetch('../api/get_settings.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+                    const s = data.data;
+                    const nameEl = document.querySelector('.logo h2');
+                    const yearEl = document.querySelector('.logo p');
+                    if (nameEl) nameEl.textContent = s.org_name       || 'Student Vote';
+                    if (yearEl) yearEl.textContent = s.election_title || 'Election 2026';
+                });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+
+</html>

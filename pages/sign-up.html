@@ -21,35 +21,29 @@
 
         <label>Full Name</label>
         <div class="input-box">
-            <input type="text" placeholder="e.g. Juan Dela Cruz">
+            <input type="text" id="full_name" placeholder="e.g. Juan Dela Cruz">
         </div>
 
         <label>Email</label>
         <div class="input-box">
-            <input type="email" placeholder="e.g. juan@university.edu">
+            <input type="email" id="email" placeholder="e.g. juan@university.edu">
         </div>
 
         <label>Student ID</label>
         <div class="input-box">
-            <input type="text" placeholder="e.g. 20248891">
+            <input type="text" id="student_id" placeholder="e.g. 20248891">
         </div>
 
         <label>Department</label>
         <div class="input-box">
-            <select>
+            <select id="department">
                 <option value="">-- Select Department --</option>
-                <option value="ccs">College of Computer Studies</option>
-                <option value="coe">College of Engineering</option>
-                <option value="cba">College of Business Administration</option>
-                <option value="cas">College of Arts and Sciences</option>
-                <option value="ced">College of Education</option>
-                <option value="con">College of Nursing</option>
             </select>
         </div>
 
         <label>Year</label>
         <div class="input-box">
-            <select>
+            <select id="year">
                 <option value="">-- Select Year --</option>
                 <option value="1">1st Year</option>
                 <option value="2">2nd Year</option>
@@ -60,10 +54,12 @@
 
         <label>Password</label>
         <div class="input-box">
-            <input type="password" placeholder="••••••••••">
+            <input type="password" id="password" placeholder="••••••••••">
         </div>
 
-        <a href="dashboard.html"><button>Sign Up →</button></a>
+        <button onclick="handleSignUp()">Sign Up →</button>
+        <p id="errorMsg" style="color: red; display: none;"></p>
+        <p id="successMsg" style="color: green; display: none;"></p>
 
         <p class="help">Already have an account? <a href="../index.html">Log In</a></p>
         <p class="help">Need help with registration? <a href="contact-admin.html">Contact Admin</a></p>
@@ -74,6 +70,113 @@
         </div>
         <a href="developer.html" class="dev-link">Developer</a>
     </div>
+
+    <script>
+        // Load departments from database on page load
+        window.addEventListener('load', function() {
+            // Check if registration is open
+            fetch('../api/get_settings.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data.allow_registration === '0') {
+                        document.querySelector('.card').innerHTML =
+                            '<div style="text-align:center; padding:30px;">' +
+                            '<div style="font-size:48px; margin-bottom:14px;">🔒</div>' +
+                            '<h2 style="color:#e74c3c; margin-bottom:10px;">Registration Closed</h2>' +
+                            '<p style="color:#666; margin-bottom:20px;">The admin has closed voter registration.</p>' +
+                            '<a href="../index.html" style="color:#3498db;">← Back to Login</a>' +
+                            '</div>';
+                    }
+                });
+
+            // Load departments
+            fetch('../api/get_data.php?endpoint=departments')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const select = document.getElementById('department');
+                        data.data.forEach(dept => {
+                            const option = document.createElement('option');
+                            option.value = dept.id;
+                            option.textContent = dept.name;
+                            select.appendChild(option);
+                        });
+                    }
+                });
+        });
+
+        function handleSignUp() {
+            var full_name = document.getElementById('full_name').value;
+            var email = document.getElementById('email').value;
+            var student_id = document.getElementById('student_id').value;
+            var department_id = document.getElementById('department').value;
+            var year = document.getElementById('year').value;
+            var password = document.getElementById('password').value;
+            var errorMsg = document.getElementById('errorMsg');
+            var successMsg = document.getElementById('successMsg');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            if (!full_name || !email || !student_id || !department_id || !year || !password) {
+                errorMsg.textContent = 'Please fill in all fields';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('full_name', full_name);
+            formData.append('email', email);
+            formData.append('student_id', student_id);
+            formData.append('department_id', department_id);
+            formData.append('year', year);
+            formData.append('password', password);
+
+            fetch('../api/register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                return response.text();
+            })
+            .then(text => {
+                console.log('Response text length:', text.length);
+                console.log('Response text:', text);
+                
+                if (!text) {
+                    throw new Error('Empty response from server');
+                }
+                
+                var data = JSON.parse(text);
+                console.log('Parsed data:', data);
+                
+                if (data.success) {
+                    successMsg.textContent = 'Registration successful! Redirecting to login...';
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 2000);
+                } else {
+                    errorMsg.textContent = data.message || 'Registration failed';
+                    errorMsg.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                errorMsg.textContent = 'Error: ' + error.message;
+                errorMsg.style.display = 'block';
+            });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSignUp();
+            }
+        });
+    </script>
 
 </body>
 
