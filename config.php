@@ -10,6 +10,7 @@ const DB_HOST = '127.0.0.1';
 const DB_PORT = '3306';
 const DB_NAME = 'election';
 const DB_USER = 'root';
+// Local development default only. Use DB_PASS environment variable in deployed environments.
 const DB_PASS = '';
 
 function db(): PDO

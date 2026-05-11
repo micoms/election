@@ -46,6 +46,19 @@ CREATE TABLE IF NOT EXISTS votes (
     UNIQUE KEY uniq_user_position (user_id, position_id)
 );
 
+CREATE TABLE IF NOT EXISTS vote_audit (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    position_id INT UNSIGNED NOT NULL,
+    old_candidate_id INT UNSIGNED NOT NULL,
+    new_candidate_id INT UNSIGNED NOT NULL,
+    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_vote_audit_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_vote_audit_position FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_vote_audit_old_candidate FOREIGN KEY (old_candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,
+    CONSTRAINT fk_vote_audit_new_candidate FOREIGN KEY (new_candidate_id) REFERENCES candidates(id) ON DELETE CASCADE
+);
+
 INSERT INTO users (full_name, email, student_id, department, year_level, password_hash, role)
 VALUES ('System Admin', 'admin@university.edu', 'ADMIN001', 'Administration', 'Staff', '$2y$10$/INOaduUjjgQNI1AFvBIZeuqkYPYh7DG0fMjPXGaUXoEY/BfHEPC2', 'admin')
 ON DUPLICATE KEY UPDATE email = VALUES(email);

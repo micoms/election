@@ -5,13 +5,15 @@ declare(strict_types=1);
 require __DIR__ . '/../config.php';
 $user = require_login('voter');
 
-$positions = db()->query(
+$positionsStmt = db()->prepare(
     'SELECT p.id, p.title, c.full_name AS selected_candidate
      FROM positions p
-     LEFT JOIN votes v ON v.position_id = p.id AND v.user_id = ' . (int) $user['id'] . '
+     LEFT JOIN votes v ON v.position_id = p.id AND v.user_id = ?
      LEFT JOIN candidates c ON c.id = v.candidate_id
      ORDER BY p.display_order ASC'
-)->fetchAll();
+);
+$positionsStmt->execute([(int) $user['id']]);
+$positions = $positionsStmt->fetchAll();
 
 $totalPositions = count($positions);
 $votedCount = 0;

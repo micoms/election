@@ -32,11 +32,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $candidate = $candidateStmt->fetch();
 
     if ($candidate) {
-        $voteStmt = db()->prepare(
-            'INSERT INTO votes (user_id, position_id, candidate_id) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE candidate_id = VALUES(candidate_id), updated_at = CURRENT_TIMESTAMP'
-        );
-        $voteStmt->execute([(int) $user['id'], $positionId, $candidateId]);
+        $pdo = db();
+        $pdo->beginTransaction();
+        try {
+            $existingStmt = $pdo->prepare('SELECT candidate_id FROM votes WHERE user_id = ? AND position_id = ? LIMIT 1');
+            $existingStmt->execute([(int) $user['id'], $positionId]);
+            $existingCandidateId = $existingStmt->fetchColumn();
+
+            $voteStmt = $pdo->prepare(
+                'INSERT INTO votes (user_id, position_id, candidate_id) VALUES (?, ?, ?)
+                 ON DUPLICATE KEY UPDATE candidate_id = VALUES(candidate_id), updated_at = CURRENT_TIMESTAMP'
+            );
+            $voteStmt->execute([(int) $user['id'], $positionId, $candidateId]);
+
+            if ($existingCandidateId !== false && (int) $existingCandidateId !== $candidateId) {
+                $auditStmt = $pdo->prepare(
+                    'INSERT INTO vote_audit (user_id, position_id, old_candidate_id, new_candidate_id)
+                     VALUES (?, ?, ?, ?)'
+                );
+                $auditStmt->execute([(int) $user['id'], $positionId, (int) $existingCandidateId, $candidateId]);
+            }
+
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+
         redirect('/pages/voter-dashboard.php');
     }
 }

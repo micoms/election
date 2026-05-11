@@ -6,14 +6,28 @@ require __DIR__ . '/../config.php';
 $user = require_login('voter');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submit_final') {
-    $countStmt = db()->prepare('SELECT COUNT(*) FROM votes WHERE user_id = ?');
-    $countStmt->execute([(int) $user['id']]);
-    $voteCount = (int) $countStmt->fetchColumn();
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        $lockStmt = $pdo->prepare("SELECT id FROM users WHERE id = ? FOR UPDATE");
+        $lockStmt->execute([(int) $user['id']]);
 
-    $positionsCount = (int) db()->query('SELECT COUNT(*) FROM positions')->fetchColumn();
-    if ($voteCount === $positionsCount) {
-        $finalStmt = db()->prepare('UPDATE users SET finalized_at = CURRENT_TIMESTAMP WHERE id = ?');
-        $finalStmt->execute([(int) $user['id']]);
+        $countStmt = $pdo->prepare('SELECT COUNT(*) FROM votes WHERE user_id = ?');
+        $countStmt->execute([(int) $user['id']]);
+        $voteCount = (int) $countStmt->fetchColumn();
+
+        $positionsCount = (int) $pdo->query('SELECT COUNT(*) FROM positions')->fetchColumn();
+        if ($voteCount === $positionsCount) {
+            $finalStmt = $pdo->prepare('UPDATE users SET finalized_at = CURRENT_TIMESTAMP WHERE id = ?');
+            $finalStmt->execute([(int) $user['id']]);
+        }
+
+        $pdo->commit();
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
     }
 }
 
